@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IncludHtml library</title>
+
+    <script src="./IncludHtml.js" defer></script>
+  </head>
+  <body>
+    <h1>IncludHtml.js</h1>
+    <h2>Эта маленькая библиотека предназначена 
+      <br>для динамической вставки в Html, содержимого других Html файлов</h2>
+    <hr />
+    <h3>[<a href="/">index.html</a>]&nbsp;&nbsp;&nbsp;&nbsp;<span><u>indexExtend.html</u> </span></h3>
+    <hr />
+    
+    <div class="incs incClass_local-incs-ext1">сюда будет вставлено из local-incs-ext1</div>
+    <div class="incs incId_1 incClass_local-incs-ext1">сюда будет вставлено из local-incs-ext1</div>
+    <div class="incs incId_1 incClass_local-incs-ext2" data-incs__calback="inc1_Onload"
+      >сюда будет вставлено из local-incs-ext1 
+      <br>и вставляемое содержимое обработано в inc1_Onload </div> 
+    <hr>
+
+    <div class="incs incFrom_block1 incClass_ext1" data-incs__calback="inc1_Onload">
+      сюда будет вставлено из ./inc/block1.inc.html 
+      <br>содержимое первого элемента по селестору 'main .ext1' 
+      <br>и вставляемое содержимое обработано в inc1_Onload
+    </div> 
+
+    <!-- контейнер элементов для локальной вставки -->
+    <div class="for-local-incs"  style="display: none;">
+      <h3 class="local-incs-ext1 otherClass1 otherClass2">----ext1 <span>inner span</span> element</р1>
+      <h3 class="local-incs-ext2 otherClass1 otherClass2">----ext2 <span>inner span</span> element</р1>
+    </div>
+
+    <script>
+      const log = console.log;
+      const war = console.warn;
+      const err = console.error;
+
+      // {incId, incFrom, incClass, docEl, externEl, externUrl: null};
+      const inc1_Onload = function ({incId, incFrom, incClass, docEl, externEl, externUrl}) { // {incId: incId, incFrom: incFrom, docEl: el, externEl: null}
+        if(incFrom){ // вставляем внеший ресурс
+          // %url%
+          let html = IncludHtml.replaceAll(externEl.innerHTML, '../img/', './img/')
+          html = IncludHtml.replaceAll(html, '%url%', externUrl)
+          externEl.innerHTML = html
+        }else{ // вставляем из тогоже документа
+          if(incId === 'incId_1'){
+            try{
+              externEl.querySelector("span").innerHTML = "<b>[ новое содержимое span ]</b>";
+            }catch(e){
+              war('inc1_Onload catch - ', e)
+            }
+          }
+        }
+        // log("inc1_Onload docEl:", docEl.outerHTML);
+        // log("inc1_Onload externEl:", externEl.outerHTML);
+      };
+
+      const inc1_Finish = function(){ // вызывается после завершения всех вставок
+        log("inc1_Finish: Ok");
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        IncludHtml.init("./inc", false, inc1_Finish);
+        IncludHtml.processAll()
+      });
+    </script>
+  </body>
+</html>
