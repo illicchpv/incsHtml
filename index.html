@@ -9,33 +9,48 @@
   </head>
   <body>
     <h1>IncludHtml.js</h1>
-    <h2>Эта маленькая библиотека предназначена 
-      <br>для динамической вставки в Html, содержимого других Html файлов</h2>
-    <hr />
-    <h3><span><u>index.html</u> </span>&nbsp;&nbsp;&nbsp;&nbsp; [<a href="./indexExtend.html">indexExtend.html</a>]</h3>
-    <hr />
-
-    <div class="incs incClass_local-incs-1">сюда будет вставлено из ext</div>
-
+    <h2>Эта маленькая библиотека предназначена <br />для динамической вставки в Html, частей других Html файлов</h2>
+    <h3>
+      <span><u>index.html</u> </span>&nbsp;&nbsp;&nbsp;&nbsp; [<a href="./indexExtend.html">indexExtend.html</a>]
+    </h3>
     <hr />
 
-    <div class="incs incFrom_block1 incClass_ext2">
-      сюда будет вставлено из ./inc/block1.inc.html
-      <br />содержимое первого элемента по селестору 'main .ext1'
-    </div>
-
+    <h2>вставка\копирование из того же документа:</h2>
+    <div
+      class="incs"
+      data-incs='{
+        "incFromId": "extId"
+      }'
+    ></div>
     <!-- контейнер элементов для локальной вставки -->
     <div class="for-local-incs" style="display: none">
-      <h3 class="local-incs-1 otherClass1 otherClass2">
-        это вставлено из элемента текущего документа 
-        <br>найденного по классу 'local-incs-1'
-        <br>----ext1 <span>inner span</span> element
+      <h3 id="extId">
+        <b><img src="./img/logo512.png" alt="logo512" width="50" />содержимое вставляемого элемента</b>
+      </h3>
+      <h3 id="extId">
+        <i>другое содержимое вставляемого элемента</i>
       </h3>
     </div>
+    <hr>
+
+    <h2>вставка\копирование из того же документа:</h2>
+    <pre
+      class="incs"
+      data-incs='{
+        "incFile": "./inc/block1.inc.html",
+        "incFromId": "extId"
+      }'
+    ></pre>
+    <hr>
 
     <script>
+      const inc_Onload = function (p) { // обработчик вставляемых элементов
+        p.extEl.innerHTML = IncludHtml.replaceAll(p.extEl.innerHTML, "../img/", "./img/");
+      };
       document.addEventListener("DOMContentLoaded", function () {
-        IncludHtml.init("./inc");
+        IncludHtml.doIncludAll(".incs", () =>{
+          console.log("IncludHtml Finish: Ok"); // вызывается когда IncludHtml всё сделал
+        });
       });
     </script>
   </body>

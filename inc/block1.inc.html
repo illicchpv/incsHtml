@@ -1,12 +1,17 @@
-<main>
-  <div class="ext1 otherClass1 otherClass2">
-    <h2><img src="../img/logo512.png" alt="logo512" width="50" />это вставлено из внешнего файла: %url% </h2>
-    <h3>по классу: 'ext1'</h3>
-    <h3>вариант 1</h3>
+<body>
+  <div id="extId">
+    <p>
+      содержимое вставляемого элемента из внешнего файла "./inc/block1.inc.html"
+    </p>
   </div>
-  <div class="ext2 otherClass1 otherClass2">
-    <h2>это вставлено из внешнего файла: block1.inc.html </h2>
-    <h3>по классу: 'ext2'</h3>
-    <h3>вариант 2</h3>
+
+  <div id="extId1">
+    <p><img src="../img/logo512.png" alt="logo512" width="50" /> 
+      это будет вставлено из внешнего файла: %url%</p>
+    <p>это будет вставлено внутри inc_Onload: <span>тут</span></p>
   </div>
-</main>
+
+  <div id="extId2">
+    этот не используется
+  </div>
+</body>

@@ -39,7 +39,7 @@ let IncludHtml = (function () {
       return;
     }
     incs.forEach((el) => {
-      // log("IncludHtml: className:", el.className, el);
+      // console.log("IncludHtml: className:", el.className, el);
       let incId = false,
         incClass = false,
         incFrom = false;
@@ -72,7 +72,7 @@ let IncludHtml = (function () {
             pparams.externEl = externEl;
             process(pparams);
           } else {
-            err("IncludHtml - не найден элемент с указанным классом:", incClass);
+            console.error("IncludHtml - не найден элемент с указанным классом:", incClass);
             remove(el);
           }
         } else {
@@ -107,15 +107,110 @@ let IncludHtml = (function () {
             });
         }
       } else {
-        err("IncludHtml - отсутствует класс incClass_???. ");
+        console.error("IncludHtml - отсутствует класс incClass_???. ");
         remove(el);
       }
     });
   }
 
+  function doIncludAll( selector, finish_callback = false){
+    _finish_callback = finish_callback;
+    const incs = document.querySelectorAll(selector);
+    _incs_count = incs.length;
+    if (_finish_callback && _incs_count <= 0) {
+      _finish_callback();
+      return;
+    }
+    
+    incs.forEach((el) => {
+      let params = el.dataset.incs
+      try{
+        params = JSON.parse(params)
+      }catch(e){
+        console.error(e)
+      }
+      let errSt = !params;
+      errSt = errSt || !params.incFromId
+      if(!errSt){
+        // params.incFromId
+        // params.incFile
+        // params.onLoadCalback
+        params.docEl = el
+        params.extEl = null
+        params.extUrl = null
+        if(!params.incFile){ // вставка элемента из текущего документа
+          const docElement = document.getElementById(params.incFromId);
+          if (docElement) {
+            const extEl = docElement.cloneNode(true);
+            extEl.removeAttribute('id');
+            params.extEl = extEl
+            doProcess(params);
+          } else {
+            console.error("IncludHtml - не найден элемент с указанным id:", params.incFromId);
+            remove(el);
+          }
+        } else {  // вставка элемента из документа внешнего html файла
+          const url = params.incFile
+          if(!url){
+            console.error("IncludHtml - не задана extUrl");
+            remove(el);
+            return
+          }
+          fetch(url)
+            .then((response) => {
+              if (response.ok) {
+                return response.text();
+              }
+              return remove(el);
+            })
+            .then((data) => {
+              if (data) {
+                const parser = new DOMParser(),
+                  content = "text/html",
+                  DOM = parser.parseFromString(data, content);
+                const extEl = DOM.getElementById(params.incFromId); // DOM.body.querySelector('.'+pparams.incClass);
+                if (extEl) {
+                  extEl.removeAttribute('id');
+                  params.extEl = extEl
+                  doProcess(params);
+                } else {
+                  console.error("Не найден элемент с id: " + params.incFromId + "\r\nВ файле: ", url);
+                  remove(el);
+                }
+              }
+            })
+            .catch((error) => {
+              console.error("Fetch error: ", error);
+            })
+          ;
+        }
+      }
+    });
+  }
+  function doProcess(params) {
+    const cb = params.onLoadCalback
+    if (cb) {
+      const handler = eval(`(p)=>{ ${cb}(p); }`);
+      try {
+        handler(params);
+      } catch (e) {
+        console.warn("catch error in call " + cb + "(params)", e);
+      }
+    }
+    // debugger
+    if(params.incInner){
+      params.docEl.outerHTML = params.extEl.innerHTML;
+    }else{
+      params.docEl.replaceWith(params.extEl);
+    }
+    remove(params.docEl);
+  }
+
+
   return {
     init,
     processAll,
     replaceAll,
+    doIncludAll,
   };
 })();
