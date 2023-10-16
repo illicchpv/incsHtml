@@ -4,6 +4,16 @@ let IncludHtml = (function () {
   let _incs_count = 0;
   let _finish_callback = false;
 
+  function replaceAll(src, search, replace) {
+    return src.split(search).join(replace);
+  }
+  function _remove() {
+    if (_finish_callback && --_incs_count <= 0) {
+      _finish_callback();
+    }
+  }
+
+  /*
   function init(incsRoot = "./inc", doProcessAll = true, finish_callback = false ) {
     _incsRoot = incsRoot;
     _finish_callback = finish_callback;
@@ -21,15 +31,7 @@ let IncludHtml = (function () {
       }
     }
     pparams.docEl.replaceWith(pparams.externEl);
-    remove(pparams.docEl);
-  }
-  function remove() {
-    if (_finish_callback && --_incs_count <= 0) {
-      _finish_callback();
-    }
-  }
-  function replaceAll(src, search, replace) {
-    return src.split(search).join(replace);
+    _remove(pparams.docEl);
   }
   function processAll(container = document) {
     const incs = container.querySelectorAll(".incs");
@@ -73,7 +75,7 @@ let IncludHtml = (function () {
             process(pparams);
           } else {
             console.error("IncludHtml - не найден элемент с указанным классом:", incClass);
-            remove(el);
+            _remove(el);
           }
         } else {
           const url = (_incsRoot + "/" + incFrom).replace("//", "/") + ".inc.html";
@@ -84,7 +86,7 @@ let IncludHtml = (function () {
               if (response.ok) {
                 return response.text();
               }
-              return remove(el);
+              return _remove(el);
             })
             .then((data) => {
               if (data) {
@@ -98,7 +100,7 @@ let IncludHtml = (function () {
                   process(pparams);
                 } else {
                   console.error("Не найден элемент с классом - " + pparams.incClass + "\r\nВ файле: ", url);
-                  remove(el);
+                  _remove(el);
                 }
               }
             })
@@ -108,10 +110,11 @@ let IncludHtml = (function () {
         }
       } else {
         console.error("IncludHtml - отсутствует класс incClass_???. ");
-        remove(el);
+        _remove(el);
       }
     });
   }
+  */
 
   function doIncludAll( selector, finish_callback = false){
     _finish_callback = finish_callback;
@@ -124,6 +127,11 @@ let IncludHtml = (function () {
     
     incs.forEach((el) => {
       let params = el.dataset.incs
+      if(!params){
+        console.error("IncludHtml - нет json параметров");
+        _remove(el);
+        return
+      }
       try{
         params = JSON.parse(params)
       }catch(e){
@@ -147,13 +155,13 @@ let IncludHtml = (function () {
             doProcess(params);
           } else {
             console.error("IncludHtml - не найден элемент с указанным id:", params.incFromId);
-            remove(el);
+            _remove(el);
           }
         } else {  // вставка элемента из документа внешнего html файла
           const url = params.incFile
           if(!url){
             console.error("IncludHtml - не задана extUrl");
-            remove(el);
+            _remove(el);
             return
           }
           fetch(url)
@@ -161,7 +169,7 @@ let IncludHtml = (function () {
               if (response.ok) {
                 return response.text();
               }
-              return remove(el);
+              return _remove(el);
             })
             .then((data) => {
               if (data) {
@@ -175,7 +183,7 @@ let IncludHtml = (function () {
                   doProcess(params);
                 } else {
                   console.error("Не найден элемент с id: " + params.incFromId + "\r\nВ файле: ", url);
-                  remove(el);
+                  _remove(el);
                 }
               }
             })
@@ -203,13 +211,10 @@ let IncludHtml = (function () {
     }else{
       params.docEl.replaceWith(params.extEl);
     }
-    remove(params.docEl);
+    _remove(params.docEl);
   }
 
-
   return {
-    init,
-    processAll,
     replaceAll,
     doIncludAll,
   };
