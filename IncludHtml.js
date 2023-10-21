@@ -116,9 +116,9 @@ let IncludHtml = (function () {
   }
   */
 
-  function doIncludAll( selector, finish_callback = false){
+  function doIncludAll( selectorClass, finish_callback = false){
     _finish_callback = finish_callback;
-    const incs = document.querySelectorAll(selector);
+    const incs = document.querySelectorAll('.'+selectorClass);
     _incs_count = incs.length;
     if (_finish_callback && _incs_count <= 0) {
       _finish_callback();
@@ -127,6 +127,8 @@ let IncludHtml = (function () {
     // try {
       incs.forEach((el) => {
         let params = el.dataset.incs
+        el.classList.remove(selectorClass);
+        el.removeAttribute('data-incs');
         if(!params){
           console.error("IncludHtml - нет json параметров");
           _remove(el);
@@ -195,7 +197,7 @@ let IncludHtml = (function () {
         }
       });
     // } finally {
-    //   doIncludAll( selector, finish_callback)
+    //   doIncludAll( selectorClass, finish_callback)
     // }    
   }
   function doProcess(params) {
@@ -232,10 +234,16 @@ let IncludHtml = (function () {
       }
     }
     // debugger
-    if(params.incInner){
-      params.docEl.outerHTML = params.extEl.innerHTML;
-    }else{
-      params.docEl.replaceWith(params.extEl);
+    if(params.insertType && params.insertType === 'append'){
+      params.docEl.append(params.extEl)
+    } else if(params.insertType && params.insertType === 'prepend'){
+      params.docEl.prepend(params.extEl)
+    } else {
+      if(params.incInner){
+        params.docEl.outerHTML = params.extEl.innerHTML;
+      }else{
+        params.docEl.replaceWith(params.extEl);
+      }
     }
     _remove(params.docEl);
   }

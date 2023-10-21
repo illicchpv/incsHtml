@@ -15,14 +15,22 @@
     </h3>
     <hr />
 
-    <h2>вставка\копирование из того же документа ("incInner": false,(по умолчанию)):</h2>
+    <h2>вставка\копирование из того же документа ("incInner": false,(по умолчанию)):<br>
+      "insertType": "replace" - по умолчанию <br>
+      "insertType": "append"<br>
+      "insertType": "prepend"
+    </h2>
     <div
       class="incs"
       data-incs='{
+        "insertType": "append",
         "incFromId": "extId"
       }'
-    ></div>
+    >
+      <p>родной параграф</p>
+    </div>
     <hr>
+
     <h2>вставка\копирование из того же документа ("incInner": true,):</h2>
     <div
       class="incs"
@@ -32,6 +40,7 @@
       }'
     ></div>
     <hr>
+
     <h2>вставка\копирование из того же документа c заменой ("другое" ==>> "other"):</h2>
     <h4>(заменя осуществляется только в innerHTML заменяющего элемента)</h4>
     <div
@@ -46,6 +55,7 @@
       }'
     ></div>
     <hr>
+    
     <!-- контейнер элементов для локальной вставки -->
     <div class="for-local-incs" style="display: none">
       <h3 id="extId">
@@ -75,7 +85,7 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        IncludHtml.doIncludAll(".incs", () =>{
+        IncludHtml.doIncludAll("incs", () =>{
           console.log("IncludHtml Finish: Ok"); // вызывается когда IncludHtml всё сделал
         });
       });
