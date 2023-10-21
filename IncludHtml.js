@@ -135,7 +135,7 @@ let IncludHtml = (function () {
       try{
         params = JSON.parse(params)
       }catch(e){
-        console.error(e)
+        console.error("Не удалось назобрать параметры!", e, "data-incs=\r\n", params)
       }
       let errSt = !params;
       errSt = errSt || !params.incFromId
@@ -196,6 +196,29 @@ let IncludHtml = (function () {
     });
   }
   function doProcess(params) {
+    if(params.replace){
+      let rArr = []
+      if(!Array.isArray(params.replace)){
+        rArr.push(params.replace)
+      } else {
+        rArr = params.replace
+      }
+      rArr.forEach((r) => {
+        console.log("r:", r)
+        debugger
+        try{
+          if( r.from && r.to){
+            const reg = new RegExp(r.from, "ig");
+            const str = params.extEl.innerHTML
+            params.extEl.innerHTML = str.replace(reg, r.to);
+          }else{
+            console.warn('"from" и "to" обязательны в елементе "replace" ');
+          }
+        }catch(e){
+          console.warn("ошибка при выполнении замены r:", r, "err:", e);
+        }
+      })
+    }   
     const cb = params.onLoadCalback
     if (cb) {
       const handler = eval(`(p)=>{ ${cb}(p); }`);

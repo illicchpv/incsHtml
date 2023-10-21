@@ -15,38 +15,65 @@
     </h3>
     <hr />
 
-    <h2>вставка\копирование из того же документа:</h2>
+    <h2>вставка\копирование из того же документа ("incInner": false,(по умолчанию)):</h2>
     <div
       class="incs"
       data-incs='{
         "incFromId": "extId"
       }'
     ></div>
+    <hr>
+    <h2>вставка\копирование из того же документа ("incInner": true,):</h2>
+    <div
+      class="incs"
+      data-incs='{
+        "incInner": true,
+        "incFromId": "extId"
+      }'
+    ></div>
+    <hr>
+    <h2>вставка\копирование из того же документа c заменой ("другое" ==>> "other"):</h2>
+    <h4>(заменя осуществляется только в innerHTML заменяющего элемента)</h4>
+    <div
+      class="incs"
+      data-incs='{
+        "replace": [
+          {"from": "другое", "to": "other"}, 
+          {"from": "содержимое", "to": "content"},
+          {"from": "\"img/", "to": "\"./img/"}
+        ],
+        "incFromId": "extId2"
+      }'
+    ></div>
+    <hr>
     <!-- контейнер элементов для локальной вставки -->
     <div class="for-local-incs" style="display: none">
       <h3 id="extId">
         <b><img src="./img/logo512.png" alt="logo512" width="50" />содержимое вставляемого элемента</b>
       </h3>
-      <h3 id="extId">
-        <i>другое содержимое вставляемого элемента</i>
+      <h3 id="extId2">
+        <p>1 другое содержимое вставляемого элемента</p>
+        <p><img src="img/logo512.png" alt="logo512" width="50" /></p>
+        <p>3 другое содержимое вставляемого элемента</p>
       </h3>
     </div>
+    
     <hr>
-
-    <h2>вставка\копирование из того же документа:</h2>
+    <h2>вставка\копирование из внешнего документа c заменой:</h2>
     <pre
       class="incs"
       data-incs='{
         "incFile": "./inc/block1.inc.html",
-        "incFromId": "extId"
+        "replace": [
+          {"from": "%url%", "to": "./inc/block1.inc.html"}, 
+          {"from": " src=\"../img/", "to": " src=\"./img/"} 
+        ],
+        "incFromId": "extId1"
       }'
     ></pre>
     <hr>
 
     <script>
-      const inc_Onload = function (p) { // обработчик вставляемых элементов
-        p.extEl.innerHTML = IncludHtml.replaceAll(p.extEl.innerHTML, "../img/", "./img/");
-      };
       document.addEventListener("DOMContentLoaded", function () {
         IncludHtml.doIncludAll(".incs", () =>{
           console.log("IncludHtml Finish: Ok"); // вызывается когда IncludHtml всё сделал
