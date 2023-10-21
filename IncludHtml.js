@@ -124,76 +124,79 @@ let IncludHtml = (function () {
       _finish_callback();
       return;
     }
-    
-    incs.forEach((el) => {
-      let params = el.dataset.incs
-      if(!params){
-        console.error("IncludHtml - нет json параметров");
-        _remove(el);
-        return
-      }
-      try{
-        params = JSON.parse(params)
-      }catch(e){
-        console.error("Не удалось назобрать параметры!", e, "data-incs=\r\n", params)
-      }
-      let errSt = !params;
-      errSt = errSt || !params.incFromId
-      if(!errSt){
-        // params.incFromId
-        // params.incFile
-        // params.onLoadCalback
-        params.docEl = el
-        params.extEl = null
-        params.extUrl = null
-        if(!params.incFile){ // вставка элемента из текущего документа
-          const docElement = document.getElementById(params.incFromId);
-          if (docElement) {
-            const extEl = docElement.cloneNode(true);
-            extEl.removeAttribute('id');
-            params.extEl = extEl
-            doProcess(params);
-          } else {
-            console.error("IncludHtml - не найден элемент с указанным id:", params.incFromId);
-            _remove(el);
-          }
-        } else {  // вставка элемента из документа внешнего html файла
-          const url = params.incFile
-          if(!url){
-            console.error("IncludHtml - не задана extUrl");
-            _remove(el);
-            return
-          }
-          fetch(url)
-            .then((response) => {
-              if (response.ok) {
-                return response.text();
-              }
-              return _remove(el);
-            })
-            .then((data) => {
-              if (data) {
-                const parser = new DOMParser(),
-                  content = "text/html",
-                  DOM = parser.parseFromString(data, content);
-                const extEl = DOM.getElementById(params.incFromId); // DOM.body.querySelector('.'+pparams.incClass);
-                if (extEl) {
-                  extEl.removeAttribute('id');
-                  params.extEl = extEl
-                  doProcess(params);
-                } else {
-                  console.error("Не найден элемент с id: " + params.incFromId + "\r\nВ файле: ", url);
-                  _remove(el);
-                }
-              }
-            })
-            .catch((error) => {
-              console.error("Fetch error: ", error);
-            })
-          ;
+    // try {
+      incs.forEach((el) => {
+        let params = el.dataset.incs
+        if(!params){
+          console.error("IncludHtml - нет json параметров");
+          _remove(el);
+          return
         }
-      }
-    });
+        try{
+          params = JSON.parse(params)
+        }catch(e){
+          console.error("Не удалось назобрать параметры!", e, "data-incs=\r\n", params)
+        }
+        let errSt = !params;
+        errSt = errSt || !params.incFromId
+        if(!errSt){
+          // params.incFromId
+          // params.incFile
+          // params.onLoadCalback
+          params.docEl = el
+          params.extEl = null
+          params.extUrl = null
+          if(!params.incFile){ // вставка элемента из текущего документа
+            const docElement = document.getElementById(params.incFromId);
+            if (docElement) {
+              const extEl = docElement.cloneNode(true);
+              extEl.removeAttribute('id');
+              params.extEl = extEl
+              doProcess(params);
+            } else {
+              console.error("IncludHtml - не найден элемент с указанным id:", params.incFromId);
+              _remove(el);
+            }
+          } else {  // вставка элемента из документа внешнего html файла
+            const url = params.incFile
+            if(!url){
+              console.error("IncludHtml - не задана extUrl");
+              _remove(el);
+              return
+            }
+            fetch(url)
+              .then((response) => {
+                if (response.ok) {
+                  return response.text();
+                }
+                return _remove(el);
+              })
+              .then((data) => {
+                if (data) {
+                  const parser = new DOMParser(),
+                    content = "text/html",
+                    DOM = parser.parseFromString(data, content);
+                  const extEl = DOM.getElementById(params.incFromId); // DOM.body.querySelector('.'+pparams.incClass);
+                  if (extEl) {
+                    extEl.removeAttribute('id');
+                    params.extEl = extEl
+                    doProcess(params);
+                  } else {
+                    console.error("Не найден элемент с id: " + params.incFromId + "\r\nВ файле: ", url);
+                    _remove(el);
+                  }
+                }
+              })
+              .catch((error) => {
+                console.error("Fetch error: ", error);
+              })
+            ;
+          }
+        }
+      });
+    // } finally {
+    //   doIncludAll( selector, finish_callback)
+    // }    
   }
   function doProcess(params) {
     if(params.replace){
@@ -205,7 +208,7 @@ let IncludHtml = (function () {
       }
       rArr.forEach((r) => {
         console.log("r:", r)
-        debugger
+        // debugger
         try{
           if( r.from && r.to){
             const reg = new RegExp(r.from, "ig");
