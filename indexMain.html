@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IncludHtml library</title>
+
+  <script src="./IncludHtml.js" defer></script>
+</head>
+
+<body>
+
+  <header>
+    <h2>header</h2>
+  </header>
+
+  <!-- <section class="incs herro"
+  data-incs='{"incFile": "./page-index/a_herro.html" }'
+  ></section> -->
+
+  <main class="main"
+    data-incs='{"incFile": "./inc/main.html" }'
+  >
+    <section>
+      <h3>main section 1</h3>
+    </section>
+    <section>
+      <h3>main section 2</h3>
+    </section>
+  </main>
+
+  <footer>
+    <h2>footer</h2>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      IncludHtml.doIncludAll(() => {
+        console.log("IncludHtml Finish: Ok"); // вызывается когда IncludHtml всё сделал
+      });
+/*
+      IncludHtml.doIncludAll(
+        {
+          insertType: "append",
+          replace: [
+            { from: 'src="../asset/img/', to: 'src="./asset/img/' },
+            { from: 'src="../asset/svg/', to: 'src="./asset/svg/' }
+          ],
+          "incFromId": "extId"
+        },
+        () => {
+          // console.log("IncludHtml Finish: Ok"); // вызывается когда IncludHtml всё сделал
+          // прячем индикатор ожидания
+          if (typeof (root1Off) === 'undefined' || !root1Off) {
+            try {
+              document.querySelector("body .root1").style.display = "";
+            } catch (e) { }
+            try {
+              document.querySelector("body .root2").style.display = "none";
+            } catch (e) { }
+          }
+
+          // по currPage добавляем 'page-selected' класс
+          document.querySelectorAll(`.root1 .${currPageClass}`).forEach((el) => {
+            el.classList.add("page-selected");
+          });
+        }
+      );
+*/
+    });
+  </script>
+</body>
+
+</html>

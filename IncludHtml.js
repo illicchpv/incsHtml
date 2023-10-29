@@ -5,10 +5,17 @@ let IncludHtml = (function () {
   let _selectorClass = "incs";
 
   function doIncludAll(defProps, finish_callback = false) {
-    _defProps = defProps;
-    _finish_callback = finish_callback;
+    if (typeof defProps === 'object') {
+      _defProps = defProps;
+    } else if (typeof defProps === 'function'){
+      _finish_callback = defProps;
+    }   
+    if (typeof finish_callback === 'function') {
+      _finish_callback = finish_callback;
+    }    
     _doIncludAll();
   }
+  
   function _doIncludAll() {
     const incs = document.querySelectorAll("." + _selectorClass);
     console.log("_doIncludAll - incs.length:", incs.length);
@@ -18,12 +25,12 @@ let IncludHtml = (function () {
       return;
     }
     try {
-      doIncludSingle(incs[0]);
+      _doIncludSingle(incs[0], _doIncludAll);
     } catch (e) {
-      console.error("doIncludSingle catch(e):", e);
+      console.error("_doIncludSingle catch(e):", e);
     }
   }
-  function doIncludSingle(el) {
+  function _doIncludSingle(el, doContinue) {
     let params = el.dataset.incs;
     el.classList.remove(_selectorClass);
     el.removeAttribute("data-incs");
@@ -55,7 +62,7 @@ let IncludHtml = (function () {
           const extEl = docElement.cloneNode(true);
           extEl.removeAttribute("id");
           params.extEl = extEl;
-          doProcess(params);
+          doProcess(params, doContinue);
         } else {
           console.error("IncludHtml - не найден элемент с указанным id:", incFromId);
         }
@@ -68,7 +75,7 @@ let IncludHtml = (function () {
         }
         fetchOrCache(url, incFromId, (extEl) => {
           params.extEl = extEl;
-          doProcess(params);
+          doProcess(params, doContinue);
         });
       }
     }
@@ -113,7 +120,7 @@ let IncludHtml = (function () {
       ;
     }
   }
-  function doProcess(params) {
+  function doProcess(params, doContinue) {
     let insertType = "";
     let incInner = false;
     let replace = [];
@@ -177,7 +184,8 @@ let IncludHtml = (function () {
       }
     }
 
-    _doIncludAll();
+    doContinue();
+    // _doIncludAll();
   }
 
   return {
