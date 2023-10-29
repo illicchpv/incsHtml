@@ -3,8 +3,13 @@ let IncludHtml = (function () {
   let _finish_callback = false;
   let _defProps = false;
   let _selectorClass = "incs";
+  let _root = document;
+  let _currentCall = ''
 
   function doIncludAll(defProps, finish_callback = false) {
+    _currentCall = 'doIncludAll'
+    // console.log('-----------', _currentCall)
+    _root = document;
     if (typeof defProps === 'object') {
       _defProps = defProps;
     } else if (typeof defProps === 'function'){
@@ -13,25 +18,54 @@ let IncludHtml = (function () {
     if (typeof finish_callback === 'function') {
       _finish_callback = finish_callback;
     }    
-    _doIncludAll();
+    _doIncludAll(_doIncludAll);
   }
-  
-  function _doIncludAll() {
-    const incs = document.querySelectorAll("." + _selectorClass);
-    console.log("_doIncludAll - incs.length:", incs.length);
-    if (incs.length <= 0) {
-      if (_finish_callback) _finish_callback();
-      requestCache = [];
-      return;
+
+  function doInsertInto(el, finish_callback = false){ // , defProps
+    _currentCall = 'doInsertInto'
+    // console.log('-----------', _currentCall)
+    _finish_callback = finish_callback;
+    _root = el;
+    _doIncludAll(_doIncludAll, el);
+  }
+
+  function _doIncludAll(doContinue, el) {
+    if(!el){
+      let incs = _root.querySelectorAll("." + _selectorClass);
+      // console.log("_doIncludAll - incs.length:", incs.length);
+      if (incs.length <= 0) {
+        if (_finish_callback) _finish_callback();
+        requestCache = [];
+        return;
+      }
+      el = incs[0]
     }
     try {
-      _doIncludSingle(incs[0], _doIncludAll);
+      _doIncludSingle(el, doContinue);
     } catch (e) {
       console.error("_doIncludSingle catch(e):", e);
-    }
+    }    
+    // let incs = []
+    // if(!el){
+    //   incs = _root.querySelectorAll("." + _selectorClass);
+    //   console.log("_doIncludAll - incs.length:", incs.length);
+    //   if (incs.length <= 0) {
+    //     if (_finish_callback) _finish_callback();
+    //     requestCache = [];
+    //     return;
+    //   }
+    // }else{
+    //   incs.push(el)
+    // }
+    // try {
+    //   _doIncludSingle(incs[0], doContinue);
+    // } catch (e) {
+    //   console.error("_doIncludSingle catch(e):", e);
+    // }
   }
   function _doIncludSingle(el, doContinue) {
     let params = el.dataset.incs;
+    // debugger
     el.classList.remove(_selectorClass);
     el.removeAttribute("data-incs");
     if (!params) {
@@ -44,8 +78,12 @@ let IncludHtml = (function () {
       console.error("Не удалось разобрать параметры!", e, "data-incs=\r\n", params);
     }
     let incFromId = false;
-    incFromId = _defProps && _defProps.incFromId ? _defProps.incFromId : incFromId;
-    incFromId = params && params.incFromId ? params.incFromId : incFromId;
+    if(!params.incFromId && params.incFile.indexOf('#') >= 0){
+      incFromId = params.incFile.split('#')[1].trim()
+    }else{
+      incFromId = _defProps && _defProps.incFromId ? _defProps.incFromId : incFromId;
+      incFromId = params && params.incFromId ? params.incFromId : incFromId;
+    }
     // let errSt = !params;
     // errSt = errSt || !incFromId
     if (incFromId && params) {
@@ -62,7 +100,7 @@ let IncludHtml = (function () {
           const extEl = docElement.cloneNode(true);
           extEl.removeAttribute("id");
           params.extEl = extEl;
-          doProcess(params, doContinue);
+          _doProcess(params, doContinue);
         } else {
           console.error("IncludHtml - не найден элемент с указанным id:", incFromId);
         }
@@ -75,7 +113,7 @@ let IncludHtml = (function () {
         }
         fetchOrCache(url, incFromId, (extEl) => {
           params.extEl = extEl;
-          doProcess(params, doContinue);
+          _doProcess(params, doContinue);
         });
       }
     }
@@ -83,6 +121,9 @@ let IncludHtml = (function () {
   let requestCache = [];
   function fetchOrCache(url, incFromId, calback) {
     url = url.toLowerCase();
+    if(url.indexOf('#') >= 0){
+      url = url.split('#')[0].trim()
+    }    
     if (requestCache[url]) {
       try{
         const extEl = requestCache[url].getElementById(incFromId).cloneNode(true);
@@ -99,11 +140,18 @@ let IncludHtml = (function () {
         })
         .then((data) => {
           if (data) {
+
             const parser = new DOMParser(),
               content = "text/html",
               DOM = parser.parseFromString(data, content);
             requestCache[url] = DOM.cloneNode(true);
             const extEl = DOM.getElementById(incFromId); // DOM.body.querySelector('.'+pparams.incClass);
+
+            // const DOM = document.createElement("div");
+            // DOM.insertAdjacentHTML("afterbegin", data);
+            // // const node = placeholder.firstElementChild;
+            // const extEl = DOM.querySelector('#' + incFromId) // DOM.getElementById(incFromId);
+
             if (extEl) {
               extEl.removeAttribute("id");
               calback(extEl);
@@ -120,16 +168,16 @@ let IncludHtml = (function () {
       ;
     }
   }
-  function doProcess(params, doContinue) {
+  function _doProcess(params, doContinue) {
     let insertType = "";
-    let incInner = false;
+    let incInner = true;
     let replace = [];
 
     insertType = _defProps && _defProps.insertType ? _defProps.insertType : insertType;
-    incInner = _defProps && _defProps.incInner ? _defProps.incInner : incInner;
+    incInner = _defProps && typeof(_defProps.incInner) === 'boolean' ? _defProps.incInner : incInner;
 
     insertType = params && params.insertType ? params.insertType : insertType;
-    incInner = params && params.incInner ? params.incInner : incInner;
+    incInner = params && typeof(params.incInner) === 'boolean' ? params.incInner : incInner;
 
     if (_defProps && _defProps.replace) {
       replace = !Array.isArray(_defProps.replace)
@@ -172,23 +220,50 @@ let IncludHtml = (function () {
     //   // debugger;
     // }
 
+    // debugger
+    // console.log('++++++++', _currentCall);
+    if(_currentCall != 'doIncludAll'){
+      // console.log(_currentCall , "(_currentCall != 'doIncludAll')")
+      incInner = true;
+      // insertType = 'replace';
+      _currentCall = 'doIncludAll'
+    }
     if (insertType && insertType === "append") {
-      params.docEl.append(params.extEl);
-    } else if (insertType && insertType === "prepend") {
-      params.docEl.prepend(params.extEl);
-    } else {
+      // params.docEl.append(params.extEl);
       if (incInner) {
+        // params.docEl.outerHTML = params.extEl.innerHTML;
+        params.docEl.innerHTML += params.extEl.innerHTML;
+      } else {
+        // params.docEl.replaceWith(params.extEl);
+        params.docEl.innerHTML += params.extEl.outerHTML;
+      }
+
+    } else if (insertType && insertType === "prepend") {
+      // params.docEl.prepend(params.extEl);
+      if (incInner) {
+        // params.docEl.outerHTML = params.extEl.innerHTML;
+        params.docEl.innerHTML = params.extEl.innerHTML + params.docEl.innerHTML;
+      } else {
+        // params.docEl.replaceWith(params.extEl);
+        params.docEl.innerHTML = params.extEl.outerHTML + params.docEl.innerHTML;
+      }
+
+    } else { // заменяем всё содержимое на innerHTML или outerHTML вставляемого
+      if (incInner) {
+        // params.docEl.outerHTML = params.extEl.innerHTML;
         params.docEl.outerHTML = params.extEl.innerHTML;
       } else {
-        params.docEl.replaceWith(params.extEl);
+        // params.docEl.replaceWith(params.extEl);
+        params.docEl.outerHTML = params.extEl.outerHTML;
       }
     }
 
-    doContinue();
+    doContinue(doContinue);
     // _doIncludAll();
   }
 
   return {
     doIncludAll,
+    doInsertInto,
   };
 })();

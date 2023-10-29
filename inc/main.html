@@ -1,0 +1,22 @@
+<div id="extId">
+  <section>
+    <h3>main section 1</h3>
+
+    <!-- элемент pre будет заменём содержимым ./inc/main.inc.html с id="extId1" -->
+    <pre
+      class="incs"
+      data-incs='{
+        "incFile": "./inc/main.inc.html#extId1",
+        "insertType": "replace",
+        "replace": [
+          {"from": "%url%", "to": "./inc/main.inc.html#extId1"}, 
+          {"from": " src=\"../img/", "to": " src=\"./img/"} 
+        ]
+      }'
+    ></pre>
+
+  </section>
+  <section>
+    <h3>main section 2</h3>
+  </section>
+</div> 
