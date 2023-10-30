@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IncludHtml library</title>
+
+<!-- 
+  https://github.com/krasimir/navigo
+  https://github.com/krasimir/navigo/blob/master/DOCUMENTATION.md
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/navigo/8.11.1/navigo.min.js" integrity="sha512-J8D8QABVZk+v5H+5nllq6DgHBiOcmhRjqAgJZm4d4d46JUBc1yrasvzbxbwNFLsK3FZmAS4TnjSyR5j7dyxdpw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+-->
+
+  <script src="./IncludHtml.js" defer></script>
+</head>
+
+<body>
+
+  <header>
+    <h2>header</h2>
+    <a href="#">home1</a>&nbsp;&nbsp;&nbsp;
+    <a href="#index">home1</a>&nbsp;&nbsp;&nbsp;
+    <a href="#about">about</a>&nbsp;&nbsp;&nbsp;
+    <a href="#nopage">404</a>&nbsp;&nbsp;&nbsp;
+  </header>
+
+  <!-- <section class="incs herro"
+  data-incs='{"incFile": "./page-index/a_herro.html" }'
+  ></section> -->
+<!-- 
+  "incFile": "./inc/main.html#extId", // путь до файла и id внутри определяет вставляемую часть
+  "incInner" : true,  // [true], false -  определяет вставляемую часть: 
+                                        // true/false - innerHTML/outerHTML; 
+  "insertType": "replace",  // ["replace"],  "append", "prepend", - куда попадает вставляемое
+  "incFromId": "extId"
+ -->
+  <main class="main incs-route" data-incs='{ "incFile": "./%routePage%" }'>
+  </main>
+
+  <footer><h2>footer</h2></footer>
+
+  <script>
+    const routes = [];
+    routes[''] =      'page-index/main.html#extId';
+    routes['index'] = 'page-index/main.html#extId';
+    routes['about'] = 'page-about/main.html#extId';
+    routes['*'] = 'main404.html#extId';
+    // вспомогательные 👇
+    routes['%routeRaw%'] = 'page-index/main.html';
+    routes['%routePage%'] = 'page-index/main.html#';
+    const hashchangeHandler = () => {
+      const h = location.hash.replaceAll('#','')
+      const url = routes[h.split('/')[0]]??routes['*']
+      const prevPage = routes['%routePage%']
+      routes['%routeRaw%'] = h;
+      routes['%routePage%'] = url;
+      if(prevPage !== routes['%routePage%']) {
+        console.log('hashchange routeRaw:', routes['%routeRaw%'], 'routePage:', routes['%routePage%'])
+        const a = document.querySelectorAll('.incs-route')
+        a.forEach((el) => {
+          el.innerHTML = ''
+          IncludHtml.doInsertInto(
+            el,
+            () => {
+              console.log("IncludHtml.doInsertInto Finish: Ok");
+            }
+          )
+        })
+      }
+    }
+
+    // window.onload = () => console.log('window onload');
+    document.addEventListener("DOMContentLoaded", function () {
+
+      IncludHtml.doIncludAll(
+        {
+          insertType: "append",
+          incInner: false,
+          replace: [
+            { from: 'src="../img/', to: 'src="./img/' },
+          ],
+          "incFromId": "extId"
+        },
+        () => {
+          hashchangeHandler()
+          window.addEventListener('hashchange', hashchangeHandler);    
+        }
+
+        // ,
+        // () => {
+        //   console.log("IncludHtml.doIncludAll Finish: Ok"); // вызывается когда IncludHtml всё сделал
+        //   // в результате вызова IncludHtml.doInsertInto
+        //   // в main добавляются элемены прописанные в его атрибуте data-incs='{ "incFile": "./inc/main.html#extId" }'
+        //   //  т.е. содержимым ./inc/main.html с id="extId"
+        //   let el = document.querySelector('main');
+        //   IncludHtml.doInsertInto(
+        //     el,
+        //     () => {
+        //       console.log("IncludHtml.doInsertInto Finish: Ok");
+        //     }
+        //   )
+        // }
+      );
+      /*
+            IncludHtml.doIncludAll(
+              {
+                insertType: "append",
+                replace: [
+                  { from: 'src="../asset/img/', to: 'src="./asset/img/' },
+                  { from: 'src="../asset/svg/', to: 'src="./asset/svg/' }
+                ],
+                "incFromId": "extId"
+              },
+              () => {
+                // console.log("IncludHtml Finish: Ok"); // вызывается когда IncludHtml всё сделал
+                // прячем индикатор ожидания
+                if (typeof (root1Off) === 'undefined' || !root1Off) {
+                  try {
+                    document.querySelector("body .root1").style.display = "";
+                  } catch (e) { }
+                  try {
+                    document.querySelector("body .root2").style.display = "none";
+                  } catch (e) { }
+                }
+      
+                // по currPage добавляем 'page-selected' класс
+                document.querySelectorAll(`.root1 .${currPageClass}`).forEach((el) => {
+                  el.classList.add("page-selected");
+                });
+              }
+            );
+      */
+    });
+  </script>
+</body>
+
+</html>

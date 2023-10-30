@@ -67,7 +67,7 @@ let IncludHtml = (function () {
     let params = el.dataset.incs;
     // debugger
     el.classList.remove(_selectorClass);
-    el.removeAttribute("data-incs");
+    // el.removeAttribute("data-incs");
     if (!params) {
       console.error("IncludHtml - нет json параметров");
       return;
@@ -120,7 +120,9 @@ let IncludHtml = (function () {
   }
   let requestCache = [];
   function fetchOrCache(url, incFromId, calback) {
-    url = url.toLowerCase();
+    // debugger
+    url = url.toLowerCase().replaceAll(('%routePage%').toLowerCase(), routes['%routePage%']);
+
     if(url.indexOf('#') >= 0){
       url = url.split('#')[0].trim()
     }    
