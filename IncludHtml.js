@@ -78,6 +78,7 @@ let IncludHtml = (function () {
     } catch (e) {
       console.error("Не удалось разобрать параметры!", e, "data-incs=\r\n", params);
     }
+    params.incFile = params.incFile.replaceAll(('%routePage%'), routes['%routePage%']);
     let incFromId = false;
     if(!params.incFromId && params.incFile.indexOf('#') >= 0){
       incFromId = params.incFile.split('#')[1].trim()
@@ -122,8 +123,6 @@ let IncludHtml = (function () {
   let requestCache = [];
   function fetchOrCache(url, incFromId, calback) {
     // debugger
-    url = url.toLowerCase().replaceAll(('%routePage%').toLowerCase(), routes['%routePage%']);
-
     if(url.indexOf('#') >= 0){
       url = url.split('#')[0].trim()
     }    
