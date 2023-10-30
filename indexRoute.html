@@ -151,40 +151,33 @@
   </footer>
 
   <script>
-    const routes = [];
-    routes[''] =        {hash: '!index', url:'page-index/main.html#extId', title:'main page'};
-    routes['!index'] =  {hash: '!index', url:'page-index/main.html#extId', title:'main page'};
-    routes['!about'] =  {hash: '!about', url:'page-about/main.html#extId', title:'about page'};
-    // вспомогательные 👇
-    routes['%lastHash%'] = false;
-    routes['%routePage%'] = 'page-index/main.html#'; // 👈 используется при загрузке части стр.
     const hashchangeHandler = () => {
       let curHash = location.hash.replaceAll('#','')
-      curHash = (curHash === '' ?  routes[''].hash : curHash)
+      curHash = (curHash === '' ?  IncludHtml.routes[''].hash : curHash)
       let curHash0 = curHash.split('/')[0]
       if(curHash.startsWith('!')){
         if(location.hash.replaceAll('#','') != curHash){
-          routes['%lastHash%'] = curHash
+          IncludHtml.routes['%lastHash%'] = curHash
           location.hash = curHash
           return
         }
         let url = ''
         try{
-          url = routes[curHash0].url
+          url = IncludHtml.routes[curHash0].url
           if(!url) 
             throw 'unsupported route [' + curHash0 + ']'
         }catch(e){
-          console.error('routes["' + curHash0 + '"].url\r\n', e)
-          if(routes['%lastHash%'])
-            location.hash = routes['%lastHash%']
+          console.error('IncludHtml.routes["' + curHash0 + '"].url\r\n', e)
+          if(IncludHtml.routes['%lastHash%'])
+            location.hash = IncludHtml.routes['%lastHash%']
           return;
         }
-        if(routes['%routePage%'] != url){
-          console.log('show url:', url, 'previouse url:', routes['%routePage%'])
-          routes['%lastHash%'] = curHash
-          routes['%routePage%'] = url
+        if(IncludHtml.routes['%routePage%'] != url){
+          console.log('show url:', url, 'previouse url:', IncludHtml.routes['%routePage%'])
+          IncludHtml.routes['%lastHash%'] = curHash
+          IncludHtml.routes['%routePage%'] = url
           // меняем заголовок стр.
-          document.title = routes[curHash0].title
+          document.title = IncludHtml.routes[curHash0].title
           // замена содержимого стр.
           const a = document.querySelectorAll('.incs-route')
           a.forEach((el) => {
@@ -198,12 +191,18 @@
           })
         }
       }else{
-        location.hash = routes['%lastHash%']
+        location.hash = IncludHtml.routes['%lastHash%']
       }
     }
 
     // window.onload = () => console.log('window onload');
     document.addEventListener("DOMContentLoaded", function () {
+      IncludHtml.routes[''] =        {hash: '!index', url:'page-index/main.html#extId', title:'main page'};
+      IncludHtml.routes['!index'] =  {hash: '!index', url:'page-index/main.html#extId', title:'main page'};
+      IncludHtml.routes['!about'] =  {hash: '!about', url:'page-about/main.html#extId', title:'about page'};
+      // вспомогательные 👇
+      IncludHtml.routes['%lastHash%'] = false;
+      IncludHtml.routes['%routePage%'] = 'page-index/main.html#'; // 👈 используется при загрузке части стр.
 
       IncludHtml.doIncludAll(
         {

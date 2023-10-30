@@ -5,6 +5,7 @@ let IncludHtml = (function () {
   let _selectorClass = "incs";
   let _root = document;
   let _currentCall = ''
+  const routes = []
 
   function doIncludAll(defProps, finish_callback = false) {
     _currentCall = 'doIncludAll'
@@ -265,6 +266,8 @@ let IncludHtml = (function () {
   }
 
   return {
+    routes,
+    
     doIncludAll,
     doInsertInto,
   };
