@@ -15,10 +15,10 @@ let IncludHtml = (function () {
       _defProps = defProps;
     } else if (typeof defProps === 'function'){
       _finish_callback = defProps;
-    }   
+    }
     if (typeof finish_callback === 'function') {
       _finish_callback = finish_callback;
-    }    
+    }
     _doIncludAll(_doIncludAll);
   }
 
@@ -45,7 +45,7 @@ let IncludHtml = (function () {
       _doIncludSingle(el, doContinue);
     } catch (e) {
       console.error("_doIncludSingle catch(e):", e);
-    }    
+    }
     // let incs = []
     // if(!el){
     //   incs = _root.querySelectorAll("." + _selectorClass);
@@ -91,7 +91,7 @@ let IncludHtml = (function () {
     if (incFromId && params) {
       // params.incFromId
       // params.incFile
-      // params.onLoadCalback
+      // params.onLoadCallback
       params.docEl = el;
       params.extEl = null;
       params.extUrl = null;
@@ -121,15 +121,15 @@ let IncludHtml = (function () {
     }
   }
   let requestCache = [];
-  function fetchOrCache(url, incFromId, calback) {
+  function fetchOrCache(url, incFromId, callback) {
     // debugger
     if(url.indexOf('#') >= 0){
       url = url.split('#')[0].trim()
-    }    
+    }
     if (requestCache[url]) {
       try{
         const extEl = requestCache[url].getElementById(incFromId).cloneNode(true);
-        calback(extEl);
+        callback(extEl);
       }catch(e){
         console.error("Ошибка при одработке документа в requestCache", e)
       }
@@ -156,7 +156,7 @@ let IncludHtml = (function () {
 
             if (extEl) {
               extEl.removeAttribute("id");
-              calback(extEl);
+              callback(extEl);
             } else {
               console.error("Не найден элемент с id: " + incFromId + "\r\nВ файле: ", url);
             }
@@ -206,7 +206,7 @@ let IncludHtml = (function () {
         }
       });
     }
-    const cb = params.onLoadCalback;
+    const cb = params.onLoadCallback;
     if (cb) {
       const handler = eval(`(p)=>{ ${cb}(p); }`);
       try {
@@ -266,7 +266,7 @@ let IncludHtml = (function () {
 
   return {
     routes,
-    
+
     doIncludAll,
     doInsertInto,
   };

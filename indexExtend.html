@@ -14,7 +14,7 @@
       [<a href="./">index.html</a>]&nbsp;&nbsp;&nbsp;&nbsp;<span><u>indexExtend.html</u> </span>
     </h3>
     <hr />
-    
+
     <div>сщдержимое элемента id="extId1" <br />из внешнего файла "./inc/block1.inc.html":</div>
     <pre
       class="incs"
@@ -27,7 +27,7 @@
     <div
       class="incs"
       data-incs='{
-        "onLoadCalback": "inc_Onload",
+        "onLoadCallback": "inc_Onload",
         "incFile": "./inc/block1.inc.html",
         "incInner": false,
         "incFromId": "extId1"
@@ -37,12 +37,12 @@
     </div>
     <pre>
     {
-      "onLoadCalback": "inc_Onload",        // вызываетсся при вставке 
+      "onLoadCallback": "inc_Onload",        // вызываетсся при вставке
                                             // каждого внешнего элемента
       "incFile": "./inc/block1.inc.html",   // если указан - URL внешнего файла
                                             // иначе используется текущий документ
       "incFromId": "extId1"                  // id вставляемого элемента
-      "incInner": false,  // incInner:false, (по умолчению) вставляется outerHTML 
+      "incInner": false,  // incInner:false, (по умолчению) вставляется outerHTML
                           // иначе innerHtml
     }
   </pre
@@ -104,7 +104,7 @@
         IncludHtml.doIncludAll(() =>{
           console.log("IncludHtml Finish: Ok");
         });
-        
+
       });
     </script>
   </body>
