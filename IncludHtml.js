@@ -36,7 +36,7 @@ let IncludHtml = (function () {
       // console.log("_doIncludAll - incs.length:", incs.length);
       if (incs.length <= 0) {
         if (_finish_callback) _finish_callback();
-        requestCache = [];
+        //requestCache = [];
         return;
       }
       el = incs[0]
@@ -124,7 +124,7 @@ let IncludHtml = (function () {
       }
     }
   }
-  let requestCache = [];
+  const requestCache = [];
   function fetchOrCache(url, incFromId, callback) {
     // debugger
     if(url.indexOf('#') >= 0){
@@ -138,6 +138,7 @@ let IncludHtml = (function () {
         console.error("Ошибка при одработке документа в requestCache", e)
       }
     } else {
+      // console.log('+++++fetch url: ', url, incFromId) //, callback)
       fetch(url)
         .then((response) => {
           if (response.ok) {
@@ -146,7 +147,7 @@ let IncludHtml = (function () {
         })
         .then((data) => {
           if (data) {
-
+            // console.log('\\\+++++fetch url: ', url, incFromId)
             const parser = new DOMParser(),
               content = "text/html",
               DOM = parser.parseFromString(data, content);
@@ -340,8 +341,27 @@ let IncludHtml = (function () {
       localLinkHandlerExt && localLinkHandlerExt(routes[routes['%lastHash0%']], routes['%pageParams%'], link)
     }
   }
+  async function preloadIncluds(urls){
+    const data = Promise.all(
+      urls.map(async (url) => ({
+          url: url,
+          r: await (await fetch(url)).text(),
+        }))
+    )
+    let pp = await data
+    pp.forEach(el => {
+      let data = el.r
+      let url = el.url
+      const parser = new DOMParser(),
+      content = "text/html",
+      DOM = parser.parseFromString(data, content);
+      requestCache[url] = DOM.cloneNode(true);
+    })
+    return data
+  }
 
   return {
+    preloadIncluds,
     doIncludAll,
     doInsertInto,
 

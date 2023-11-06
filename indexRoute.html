@@ -46,7 +46,7 @@
   "insertType": "replace",  // ["replace"],  "append", "prepend", - куда попадает вставляемое
   "incFromId": "extId"
  -->
-  <main class="main incs-route" data-incs='{ "incFile": "./%routePage%%pageParams%" }'>
+  <main class="main incs-route" data-incs='{ "incFile": "%routePage%%pageParams%" }'>
   </main>
 
   <footer><h2>footer</h2>
@@ -139,9 +139,9 @@
     
     const routerParams = {
       urls: [
-        {url:'', hash: '!index', includ_url:'page-index/main.html#extId', title:'main page'},
-        {url:'!index', hash: '!index', includ_url:'page-index/main.html#extId', title:'main page'},
-        {url:'!about', hash: '!about', includ_url:'page-about/main.html#extId', def_param: '/1', title:'about page'},
+        {url:'', hash: '!index',        includ_url:'./page-index/main.html#extId', title:'main page'},
+        {url:'!index', hash: '!index',  includ_url:'./page-index/main.html#extId', title:'main page'},
+        {url:'!about', hash: '!about',  includ_url:'./page-about/main.html#extId', def_param: '/1', title:'about page'},
       ],
       hashChangeHandler: (urlObj, pageParams) => { //  (routePage, pageParams) => {
         console.log('=============hashchangeHandler', 'urlObj:', urlObj, 'pageParams:', pageParams)
@@ -163,7 +163,7 @@
         })
       }, 
       paramChangeHandler: (urlObj, pageParams) => { //  (routePage, pageParams)
-        console.log('=============paramChangeHandler', 'urlObj:', urlObj, 'pageParams:', pageParams)
+        // console.log('=============paramChangeHandler', 'urlObj:', urlObj, 'pageParams:', pageParams)
         routerParams.hashChangeHandler(urlObj, pageParams)
       },
       // localLinkHandler: (urlObj, pageParams, link) => { //  (routePage, pageParams, link) 
@@ -173,7 +173,12 @@
     // routerParams.paramChangeHandler = routerParams.hashChangeHandler
 
     // window.onload = () => console.log('window onload');
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", async function () {
+
+      // let p = await IncludHtml.preloadIncluds(['./page-index/main.html','./page-about/main.html'])
+      // console.log('preloadIncluds ok')
+      // // debugger
+
       IncludHtml.doIncludAll(
         {
           insertType: "append",
