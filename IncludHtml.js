@@ -5,7 +5,7 @@ let IncludHtml = (function () {
   let _selectorClass = "incs";
   let _root = document;
   let _currentCall = ''
-  const routes = []
+  let routes = []
 
   function doIncludAll(defProps, finish_callback = false) {
     _currentCall = 'doIncludAll'
@@ -264,10 +264,83 @@ let IncludHtml = (function () {
     // _doIncludAll();
   }
 
-  return {
-    routes,
+  let hashChangeHandlerExt = false;
+  let paramChangeHandlerExt = false;
+  let localLinkHandlerExt = false;
+  function CreateRouter({urls, hashChangeHandler, paramChangeHandler, localLinkHandler}){
+    // console.log('CreateRouter', routes, hashChangeHandler, paramChangeHandler)
+    hashChangeHandlerExt = hashChangeHandler
+    paramChangeHandlerExt = paramChangeHandler
+    localLinkHandlerExt = localLinkHandler
+    for(const el of  urls){
+      routes[el.url] = el
+    }
+    // вспомогательные 👇
+    routes['%lastHash%'] = '';
+    routes['%lastHash0%'] = '';
+    routes['%routePage%'] = ''; // 'page-index/main.html#'; // 👈 используется при загрузке части стр.
+    routes['%pageParams%'] = ''
 
+    _hashchangeHandler();
+    window.addEventListener('hashchange', _hashchangeHandler);    
+  }
+  const _hashchangeHandler = () => {
+    let curHash = location.hash.replaceAll('#','')
+    curHash = (curHash === '' ?  routes[''].hash : curHash)
+    let curHash0 = curHash.split('/')[0]
+    if(curHash.startsWith('!')){
+      let pageParams = curHash.split('/').reduce((s,el,i) => {return i > 0 ? s + '/' + el : s;}, '')
+      if(location.hash.replaceAll('#','') != curHash){
+        routes['%lastHash%'] = curHash
+        routes['%lastHash0%'] = curHash0
+        console.log('set location.hash = curHash:', curHash)
+        window.history.replaceState({}, null, location.href.split('#')[0] + '#' + curHash);
+      }
+      let includ_url = ''
+      let def_param = ''
+      try{
+        if(!routes[curHash0]){
+          console.error('Unsupported route:' + curHash0)
+          window.history.replaceState({}, null, location.href.split('#')[0] + '#' + routes['%lastHash%']);
+          return
+        }
+        includ_url = routes[curHash0].includ_url
+        if(!includ_url)
+          throw 'unsupported route [' + curHash0 + ']'
+        if(routes[curHash0].def_param)
+          def_param = routes[curHash0].def_param
+      }catch(e){
+        console.error('IncludHtml.routes["' + curHash0 + '"].includ_url\r\n', e)
+        window.history.replaceState({}, null, location.href.split('#')[0] + '#' + routes['%lastHash%']);
+        return;
+      }
+      routes['%lastHash%'] = curHash
+      routes['%lastHash0%'] = curHash0
+      pageParams  = pageParams || def_param
+      let pageParamsChanged = routes['%pageParams%'] != pageParams;
+      routes['%pageParams%'] = pageParams
+      if(routes['%routePage%'] != includ_url){
+        // console.log('Render content for INCLUD url:', includ_url, ' prev INCLUD url:', IncludHtml.routes['%routePage%'], 'pageParams:', IncludHtml.routes['%pageParams%'])
+        routes['%routePage%'] = includ_url
+        hashChangeHandlerExt && hashChangeHandlerExt(routes[curHash0], routes['%pageParams%']);
+      }else{
+        if(pageParamsChanged){
+          // console.log("pageParamsChanged '%pageParams%': ", IncludHtml.routes['%pageParams%']);
+          paramChangeHandlerExt && paramChangeHandlerExt(routes[curHash0], routes['%pageParams%'])
+        }
+      }
+    }else{
+      // console.log('Link to Inner ref: ' + location.hash)
+      const link = location.hash 
+      window.history.replaceState({}, null, location.href.split('#')[0] + '#' + routes['%lastHash%']);
+      localLinkHandlerExt && localLinkHandlerExt(routes[routes['%lastHash0%']], routes['%pageParams%'], link)
+    }
+  }
+
+  return {
     doIncludAll,
     doInsertInto,
+
+    CreateRouter,
   };
 })();

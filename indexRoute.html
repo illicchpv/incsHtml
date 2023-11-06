@@ -70,67 +70,110 @@
   </footer>
 
   <script>
-    const hashchangeHandler = () => {
-      let curHash = location.hash.replaceAll('#','')
-      curHash = (curHash === '' ?  IncludHtml.routes[''].hash : curHash)
-      let curHash0 = curHash.split('/')[0]
-      if(curHash.startsWith('!')){
-        let pageParams = curHash.split('/').reduce((s,el,i) => {return i > 0 ? s + '/' + el : s;}, '')
-        if(location.hash.replaceAll('#','') != curHash){
-          IncludHtml.routes['%lastHash%'] = curHash
-          location.hash = curHash
-          return
-        }
-        let url = ''
-        try{
-          url = IncludHtml.routes[curHash0].url
-          if(!url)
-            throw 'unsupported route [' + curHash0 + ']'
-        }catch(e){
-          console.error('IncludHtml.routes["' + curHash0 + '"].url\r\n', e)
-          if(IncludHtml.routes['%lastHash%'])
-            location.hash = IncludHtml.routes['%lastHash%']
-          return;
-        }
-        IncludHtml.routes['%lastHash%'] = curHash
-        let pageParamsChanged = IncludHtml.routes['%pageParams%'] != pageParams;
-        IncludHtml.routes['%pageParams%'] = pageParams
-        if(IncludHtml.routes['%routePage%'] != url){
-          console.log('show url:', url, 'previouse url:', IncludHtml.routes['%routePage%'])
-          IncludHtml.routes['%routePage%'] = url
-          // меняем заголовок стр.
-          document.title = IncludHtml.routes[curHash0].title
-          // замена содержимого стр.
-          const a = document.querySelectorAll('.incs-route')
-          a.forEach((el) => {
-            el.innerHTML = ''
-            IncludHtml.doInsertInto(
-              el,
-              () => {
-                console.log("IncludHtml.doInsertInto Finish: Ok");
-              }
-            )
-          })
-        }else{
-          if(pageParamsChanged){
-            console.log("pageParamsChanged '%pageParams%': ", IncludHtml.routes['%pageParams%']);
-          }
-        }
-      }else{
-        console.log('Link to Inner ref: ' + location.hash)
-        location.hash = IncludHtml.routes['%lastHash%']
-      }
+//     const hashchangeHandler = () => {
+//       debugger;
+//       console.log('hashchangeHandler:', location.hash)
+//       let curHash = location.hash.replaceAll('#','')
+//       curHash = (curHash === '' ?  IncludHtml.routes[''].hash : curHash)
+//       let curHash0 = curHash.split('/')[0]
+//       if(curHash.startsWith('!')){
+//         let pageParams = curHash.split('/').reduce((s,el,i) => {return i > 0 ? s + '/' + el : s;}, '')
+//         if(location.hash.replaceAll('#','') != curHash){
+//           IncludHtml.routes['%lastHash%'] = curHash
+//           console.log('set location.hash = curHash:', curHash)
+//           //location.hash = curHash
+//           window.history.replaceState({}, null, location.href.split('#')[0] + '#' + curHash);
+//           //return
+//         }
+//         let includ_url = ''
+//         let def_param = ''
+//         try{
+//           if(!IncludHtml.routes[curHash0]){
+//             console.error('Unsupported route:' + curHash0)
+//             window.history.replaceState({}, null, location.href.split('#')[0] + '#' + IncludHtml.routes['%lastHash%']);
+//             return
+//           }
+//           includ_url = IncludHtml.routes[curHash0].includ_url
+//           if(!includ_url)
+//             throw 'unsupported route [' + curHash0 + ']'
+//           if(IncludHtml.routes[curHash0].def_param)
+//             def_param = IncludHtml.routes[curHash0].def_param
+//         }catch(e){
+//           console.error('IncludHtml.routes["' + curHash0 + '"].includ_url\r\n', e)
+//           window.history.replaceState({}, null, location.href.split('#')[0] + '#' + IncludHtml.routes['%lastHash%']);
+//           // if(IncludHtml.routes['%lastHash%'])
+//           //   location.hash = IncludHtml.routes['%lastHash%']
+//           return;
+//         }
+//         //debugger
+//         IncludHtml.routes['%lastHash%'] = curHash
+//         pageParams  = pageParams || def_param
+//         let pageParamsChanged = IncludHtml.routes['%pageParams%'] != pageParams;
+//         IncludHtml.routes['%pageParams%'] = pageParams
+//         if(IncludHtml.routes['%routePage%'] != includ_url){
+// console.log('Render content for INCLUD url:', includ_url, ' prev INCLUD url:', IncludHtml.routes['%routePage%'], 'pageParams:', IncludHtml.routes['%pageParams%'])
+//           IncludHtml.routes['%routePage%'] = includ_url
+//           // меняем заголовок стр.
+// //document.title = IncludHtml.routes[curHash0].title
+//           // замена содержимого стр.
+//           const a = document.querySelectorAll('.incs-route')
+//           a.forEach((el) => {
+//             el.innerHTML = ''
+//             IncludHtml.doInsertInto(
+//               el,
+//               () => {
+//                 console.log("IncludHtml.doInsertInto Finish: Ok");
+//               }
+//             )
+//           })
+//         }else{
+//           if(pageParamsChanged){
+//             console.log("pageParamsChanged '%pageParams%': ", IncludHtml.routes['%pageParams%']);
+//           }
+//         }
+//       }else{
+//         console.log('Link to Inner ref: ' + location.hash)
+//         location.hash = IncludHtml.routes['%lastHash%']
+//       }
+//     }
+    
+    const routerParams = {
+      urls: [
+        {url:'', hash: '!index', includ_url:'page-index/main.html#extId', title:'main page'},
+        {url:'!index', hash: '!index', includ_url:'page-index/main.html#extId', title:'main page'},
+        {url:'!about', hash: '!about', includ_url:'page-about/main.html#extId', def_param: '/1', title:'about page'},
+      ],
+      hashChangeHandler: (urlObj, pageParams) => { //  (routePage, pageParams) => {
+        console.log('=============hashchangeHandler', 'urlObj:', urlObj, 'pageParams:', pageParams)
+
+        // меняем заголовок стр.
+        document.title = urlObj.title
+        // замена содержимого стр.
+        const a = document.querySelectorAll('.incs-route')
+        a.forEach((el) => {
+          el.innerHTML = ''
+          // в результате вызова IncludHtml.doInsertInto
+          // в main добавляются элемены прописанные в его атрибуте data-incs='{ "incFile": "./inc/main.html#extId" }'
+          //  т.е. содержимым ./inc/main.html с id="extId"
+          IncludHtml.doInsertInto(
+            el,
+            () => {
+              console.log("IncludHtml.doInsertInto Finish: Ok");
+            }
+          )
+        })
+
+      },
+      paramChangeHandler: (urlObj, pageParams) => { //  (routePage, pageParams)
+        console.log('=============paramChangeHandler', 'urlObj:', urlObj, 'pageParams:', pageParams)
+      },
+      localLinkHandler: (urlObj, pageParams, link) => { //  (routePage, pageParams, link) 
+        console.log('=============localLinkHandler', 'urlObj:', urlObj, 'pageParams:', pageParams, 'link:', link)
+      },
     }
 
     // window.onload = () => console.log('window onload');
     document.addEventListener("DOMContentLoaded", function () {
-      IncludHtml.routes[''] =        {hash: '!index', url:'page-index/main.html#extId', title:'main page'};
-      IncludHtml.routes['!index'] =  {hash: '!index', url:'page-index/main.html#extId', title:'main page'};
-      IncludHtml.routes['!about'] =  {hash: '!about', url:'page-about/main.html#extId', title:'about page'};
-      // вспомогательные 👇
-      IncludHtml.routes['%lastHash%'] = false;
-      IncludHtml.routes['%routePage%'] = 'page-index/main.html#'; // 👈 используется при загрузке части стр.
-
       IncludHtml.doIncludAll(
         {
           insertType: "append",
@@ -140,55 +183,10 @@
           ],
           "incFromId": "extId"
         },
-        () => {
-          hashchangeHandler()
-          window.addEventListener('hashchange', hashchangeHandler);
+        () => { // вызывается когда IncludHtml всё сделал
+          const router = IncludHtml.CreateRouter(routerParams);
         }
-
-        // ,
-        // () => {
-        //   console.log("IncludHtml.doIncludAll Finish: Ok"); // вызывается когда IncludHtml всё сделал
-        //   // в результате вызова IncludHtml.doInsertInto
-        //   // в main добавляются элемены прописанные в его атрибуте data-incs='{ "incFile": "./inc/main.html#extId" }'
-        //   //  т.е. содержимым ./inc/main.html с id="extId"
-        //   let el = document.querySelector('main');
-        //   IncludHtml.doInsertInto(
-        //     el,
-        //     () => {
-        //       console.log("IncludHtml.doInsertInto Finish: Ok");
-        //     }
-        //   )
-        // }
       );
-      /*
-            IncludHtml.doIncludAll(
-              {
-                insertType: "append",
-                replace: [
-                  { from: 'src="../asset/img/', to: 'src="./asset/img/' },
-                  { from: 'src="../asset/svg/', to: 'src="./asset/svg/' }
-                ],
-                "incFromId": "extId"
-              },
-              () => {
-                // console.log("IncludHtml Finish: Ok"); // вызывается когда IncludHtml всё сделал
-                // прячем индикатор ожидания
-                if (typeof (root1Off) === 'undefined' || !root1Off) {
-                  try {
-                    document.querySelector("body .root1").style.display = "";
-                  } catch (e) { }
-                  try {
-                    document.querySelector("body .root2").style.display = "none";
-                  } catch (e) { }
-                }
-
-                // по currPage добавляем 'page-selected' класс
-                document.querySelectorAll(`.root1 .${currPageClass}`).forEach((el) => {
-                  el.classList.add("page-selected");
-                });
-              }
-            );
-      */
     });
   </script>
 </body>
