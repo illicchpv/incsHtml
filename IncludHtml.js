@@ -78,7 +78,11 @@ let IncludHtml = (function () {
     } catch (e) {
       console.error("Не удалось разобрать параметры!", e, "data-incs=\r\n", params);
     }
-    params.incFile = params.incFile.replaceAll(('%routePage%'), routes['%routePage%']);
+    let pp = routes['%pageParams%'].replace('/', '')
+    params.incFile = params.incFile
+      .replaceAll(('%routePage%'), routes['%routePage%'])
+      .replaceAll(('%pageParams%'), pp)
+      ;
     let incFromId = false;
     if(!params.incFromId && params.incFile.indexOf('#') >= 0){
       incFromId = params.incFile.split('#')[1].trim()

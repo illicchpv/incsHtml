@@ -46,7 +46,7 @@
   "insertType": "replace",  // ["replace"],  "append", "prepend", - куда попадает вставляемое
   "incFromId": "extId"
  -->
-  <main class="main incs-route" data-incs='{ "incFile": "./%routePage%" }'>
+  <main class="main incs-route" data-incs='{ "incFile": "./%routePage%%pageParams%" }'>
   </main>
 
   <footer><h2>footer</h2>
@@ -145,7 +145,6 @@
       ],
       hashChangeHandler: (urlObj, pageParams) => { //  (routePage, pageParams) => {
         console.log('=============hashchangeHandler', 'urlObj:', urlObj, 'pageParams:', pageParams)
-
         // меняем заголовок стр.
         document.title = urlObj.title
         // замена содержимого стр.
@@ -162,15 +161,16 @@
             }
           )
         })
-
-      },
+      }, 
       paramChangeHandler: (urlObj, pageParams) => { //  (routePage, pageParams)
         console.log('=============paramChangeHandler', 'urlObj:', urlObj, 'pageParams:', pageParams)
+        routerParams.hashChangeHandler(urlObj, pageParams)
       },
-      localLinkHandler: (urlObj, pageParams, link) => { //  (routePage, pageParams, link) 
-        console.log('=============localLinkHandler', 'urlObj:', urlObj, 'pageParams:', pageParams, 'link:', link)
-      },
+      // localLinkHandler: (urlObj, pageParams, link) => { //  (routePage, pageParams, link) 
+      //   console.log('=============localLinkHandler', 'urlObj:', urlObj, 'pageParams:', pageParams, 'link:', link)
+      // },
     }
+    // routerParams.paramChangeHandler = routerParams.hashChangeHandler
 
     // window.onload = () => console.log('window onload');
     document.addEventListener("DOMContentLoaded", function () {
