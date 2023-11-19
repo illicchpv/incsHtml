@@ -19,7 +19,15 @@ let IncludHtml = (function () {
     if (typeof finish_callback === 'function') {
       _finish_callback = finish_callback;
     }
-    _doIncludAll(_doIncludAll);
+    if(_defProps.preload){
+      doPreload(_defProps.preload,
+          () => {
+            console.log('doPreload ready')
+            _doIncludAll(_doIncludAll);
+          })
+    }else{
+      _doIncludAll(_doIncludAll);
+    }
   }
 
   function doInsertInto(el, finish_callback = false){ // , defProps
@@ -78,11 +86,13 @@ let IncludHtml = (function () {
     } catch (e) {
       console.error("Не удалось разобрать параметры!", e, "data-incs=\r\n", params);
     }
-    let pp = routes['%pageParams%'].replace('/', '')
-    params.incFile = params.incFile
-      .replaceAll(('%routePage%'), routes['%routePage%'])
-      .replaceAll(('%pageParams%'), pp)
+    if(routes['%pageParams%']){
+      let pp = routes['%pageParams%'].replace('/', '')
+      params.incFile = params.incFile
+          .replaceAll(('%routePage%'), routes['%routePage%'])
+          .replaceAll(('%pageParams%'), pp)
       ;
+    }
     let incFromId = false;
     if(!params.incFromId && params.incFile.indexOf('#') >= 0){
       incFromId = params.incFile.split('#')[1].trim()
@@ -138,7 +148,7 @@ let IncludHtml = (function () {
         console.error("Ошибка при одработке документа в requestCache", e)
       }
     } else {
-      // console.log('+++++fetch url: ', url, incFromId) //, callback)
+      console.log('+++++fetch url: ', url, incFromId) //, callback)
       fetch(url)
         .then((response) => {
           if (response.ok) {
@@ -180,11 +190,26 @@ let IncludHtml = (function () {
     let incInner = true;
     let replace = [];
 
+    // if(params && typeof(params.incInner) === 'boolean'){
+    //   incInner = params.incInner
+    // } else {
+    //   incInner = _defProps && typeof(_defProps.incInner) === 'boolean' ? _defProps.incInner : incInner;
+    // }
+
     insertType = _defProps && _defProps.insertType ? _defProps.insertType : insertType;
     incInner = _defProps && typeof(_defProps.incInner) === 'boolean' ? _defProps.incInner : incInner;
 
-    insertType = params && params.insertType ? params.insertType : insertType;
-    incInner = params && typeof(params.incInner) === 'boolean' ? params.incInner : incInner;
+    if(params){
+      insertType = params.insertType ? params.insertType : insertType;
+      if(typeof(params.incInner) === 'string'){
+        params.incInner = (params.incInner).trim().toLowerCase()
+        if(params.incInner === "true")
+          params.incInner = true
+        if(params.incInner === "false")
+          params.incInner = false
+      }
+      incInner = typeof(params.incInner) === 'boolean' ? params.incInner : incInner;
+    }
 
     if (_defProps && _defProps.replace) {
       replace = !Array.isArray(_defProps.replace)
@@ -196,7 +221,7 @@ let IncludHtml = (function () {
         ? (replace = replace.concat([params.replace]))
         : (replace = replace.concat(params.replace));
     }
-    if (replace) {
+    if (replace && replace.length > 0) {
       replace.forEach((r) => {
         try {
           if (r.from && r.to) {
@@ -341,27 +366,41 @@ let IncludHtml = (function () {
       localLinkHandlerExt && localLinkHandlerExt(routes[routes['%lastHash0%']], routes['%pageParams%'], link)
     }
   }
-  async function preloadIncluds(urls){
+  async function _preloadIncluds(urls, readyCB){
     const data = Promise.all(
       urls.map(async (url) => ({
           url: url,
-          r: await (await fetch(url)).text(),
+          r: url.endsWith('.json')
+              ? await (await fetch(url)).json()
+              : await (await fetch(url)).text()
+              ,
         }))
     )
     let pp = await data
     pp.forEach(el => {
       let data = el.r
       let url = el.url
-      const parser = new DOMParser(),
-      content = "text/html",
-      DOM = parser.parseFromString(data, content);
-      requestCache[url] = DOM.cloneNode(true);
+      if(url.endsWith('.json') || url.endsWith('.txt')){
+        requestCache[url] = data
+      }else{
+        const parser = new DOMParser(),
+            content = "text/html",
+            DOM = parser.parseFromString(data, content);
+        requestCache[url] = DOM.cloneNode(true);
+      }
     })
     return data
   }
+  async function doPreload(urls, onReadyPreload){
+    await _preloadIncluds(urls)
+    if(onReadyPreload) onReadyPreload()
+  }
 
   return {
-    preloadIncluds,
+    requestCache,
+    // _preloadIncluds,
+    doPreload,
+
     doIncludAll,
     doInsertInto,
 

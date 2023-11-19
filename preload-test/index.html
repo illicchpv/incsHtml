@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src="../IncludHtml.js" defer></script>
+
+<!--    <link rel="stylesheet" class="incs" data-incs='{"insertType": "replace", "incInner": true, "incFile": "./head.html#extId" }'>-->
+</head>
+<body>
+
+<h1>preload test(h1)</h1>
+<hr>
+
+<header class="incs" data-incs='{"insertType": "replace", "incInner": "true", "incFile": "./header.html#extId" }'></header>
+
+<main class="main incs" data-incs='{ "incFile": "./main.html#extId" }'>
+    <section>
+        <h3>main section 0</h3>
+    </section>
+</main>
+
+<footer class="incs" data-incs='{"insertType": "replace", "incInner": true,  "incFile": "./footer.html#extId" }'></footer>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        console.log('DOMContentLoaded start')
+        // IncludHtml.doPreload(
+        //     ["./header.html", "./main.html", "./footer.html", "./test.json"],
+        //     () => { // preload ready
+        //         console.log('doPreload ready')
+        //         console.log(' completed', IncludHtml.requestCache)
+        //
+        //         IncludHtml.doIncludAll(
+        //             {
+        //                 insertType: "append",
+        //                 incInner: false,
+        //                 replace: [
+        //                     // { from: 'src="../img/', to: 'src="./img/' },
+        //                 ],
+        //                 "incFromId": "extId"
+        //             },
+        //             () => { // вызывается когда IncludHtml всё сделал
+        //                 console.log(' completed')
+        //                 // console.log(' completed', IncludHtml.requestCache)
+        //             }
+        //         );
+        //
+        //     }
+        // )
+        // console.log('DOMContentLoaded continue')
+
+        IncludHtml.doIncludAll(
+            {
+                preload: ["./header.html", "./main.html", "./footer.html", "./test.json"],
+                insertType: "append",
+                incInner: false,
+                replace: [
+                    { from: 'src="../img/', to: 'src="./img/' },
+                ],
+                "incFromId": "extId"
+            },
+            () => { // вызывается когда IncludHtml всё сделал
+                console.log('doIncludAll completed')
+                console.log(' requestCache:', IncludHtml.requestCache)
+            }
+        );
+    });
+
+</script>
+</body>
+</html>
