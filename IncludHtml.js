@@ -254,7 +254,7 @@ let IncludHtml = (function () {
 
     // debugger
     // console.log('++++++++', _currentCall);
-    if(_currentCall != 'doIncludAll'){
+    if(_currentCall !== 'doIncludAll'){
       // console.log(_currentCall , "(_currentCall != 'doIncludAll')")
       incInner = true;
       // insertType = 'replace';
@@ -320,7 +320,7 @@ let IncludHtml = (function () {
     let curHash0 = curHash.split('/')[0]
     if(curHash.startsWith('!')){
       let pageParams = curHash.split('/').reduce((s,el,i) => {return i > 0 ? s + '/' + el : s;}, '')
-      if(location.hash.replaceAll('#','') != curHash){
+      if(location.hash.replaceAll('#','') !== curHash){
         routes['%lastHash%'] = curHash
         routes['%lastHash0%'] = curHash0
         console.log('set location.hash = curHash:', curHash)
@@ -335,8 +335,9 @@ let IncludHtml = (function () {
           return
         }
         includ_url = routes[curHash0].includ_url
-        if(!includ_url)
+        if(!includ_url) {
           throw 'unsupported route [' + curHash0 + ']'
+        }
         if(routes[curHash0].def_param)
           def_param = routes[curHash0].def_param
       }catch(e){
@@ -347,9 +348,9 @@ let IncludHtml = (function () {
       routes['%lastHash%'] = curHash
       routes['%lastHash0%'] = curHash0
       pageParams  = pageParams || def_param
-      let pageParamsChanged = routes['%pageParams%'] != pageParams;
+      let pageParamsChanged = routes['%pageParams%'] !== pageParams;
       routes['%pageParams%'] = pageParams
-      if(routes['%routePage%'] != includ_url){
+      if(routes['%routePage%'] !== includ_url){
         // console.log('Render content for INCLUD url:', includ_url, ' prev INCLUD url:', IncludHtml.routes['%routePage%'], 'pageParams:', IncludHtml.routes['%pageParams%'])
         routes['%routePage%'] = includ_url
         hashChangeHandlerExt && hashChangeHandlerExt(routes[curHash0], routes['%pageParams%']);
@@ -366,7 +367,7 @@ let IncludHtml = (function () {
       localLinkHandlerExt && localLinkHandlerExt(routes[routes['%lastHash0%']], routes['%pageParams%'], link)
     }
   }
-  async function _preloadIncluds(urls, readyCB){
+  async function _preloadIncluds(urls){
     const data = Promise.all(
       urls.map(async (url) => ({
           url: url,
