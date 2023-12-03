@@ -1,0 +1,186 @@
+:root{
+  --top: 30px;
+}
+html {
+  box-sizing: border-box;
+}
+*,*:after, *:before{
+  box-sizing: inherit;
+}
+body{
+  font-family: sans-serif;
+  overflow-x: hidden;
+  background-color: rgb(231, 247, 244);
+
+  display: flex;
+  flex-direction: column;
+  min-height: 98vh;
+}
+main{
+  flex-grow: 1;
+}
+a{
+  color: inherit;
+}
+h1, h2, h3 {
+  margin: 0;
+}
+p{
+  margin-bottom: 0;
+}
+ul{
+  list-style: none;
+  padding: 0;
+}
+.container{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 10px 0;
+}
+
+/* header */
+.header {
+  position: absolute;
+  width: 100%;
+  top: var(--top);
+  left: 0;
+}
+.container_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header__logo {
+  font-size: 32px;
+}
+.header__nav {
+}
+.header__nav-list {
+  display: flex;
+  gap: 10px;
+}
+.header__nav-item {
+}
+.header__nav-item a{
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.header__nav-item a:hover{
+  text-decoration: underline;
+  background-color: rgba(250, 234, 214, 0.5);
+}
+.header__nav-item_selected a{
+  background-color: rgba(250, 234, 214, 0.5);
+}
+
+/* hero */
+.hero {
+  /* padding-top: 70px; */
+  /* margin-top: -70px; */
+  margin-top: 40px;
+  background: -webkit-linear-gradient(180deg, rgb(231, 247, 244), rgb(18, 121, 124) 76%);
+  background: -moz-linear-gradient(180deg, rgb(231, 247, 244), rgb(18, 121, 124) 76%);
+  background: linear-gradient(180deg, rgb(231, 247, 244), rgb(18, 121, 124) 76%); 
+
+  color: white;
+}
+.container_hero {
+}
+.hero__title {
+  margin-top: 40px;
+}
+.hero__info {
+}
+.content {
+}
+.container_content {
+}
+.include {
+}
+
+/* content */
+.content {
+  background: -webkit-linear-gradient(0deg, rgb(231, 247, 244) 89%, rgb(18, 121, 124) 97%);
+  background: -moz-linear-gradient(0deg, rgb(231, 247, 244) 89%, rgb(18, 121, 124) 97%);
+  background: linear-gradient(0deg, rgb(231, 247, 244) 89%, rgb(18, 121, 124) 97%);
+}
+.container_content {
+}
+.leftfoto{
+  float:left;
+  margin: 4px 10px 2px 0px;
+  border:1px solid #CCC;
+  padding:6px;
+  height: 80px;
+}
+.content__title{
+  /* color: white; */
+}
+.content-main{
+
+}
+
+.content-product{
+
+}
+.content-product__grid{
+  display: grid;
+  grid-template-columns: 100px auto;
+  row-gap: 10px;
+}
+.content-product__img{
+  width: 100px;
+}
+
+
+.content-about{
+
+}
+.content-about__on-map {
+  display: grid;
+  grid-template-columns: 200px auto;
+}
+.content-about__info {
+  padding: 10px  4px;
+  margin-bottom: 20px;
+}
+.content-about__info_selected{
+  background-color: bisque;
+}
+.content-about__map {
+  height: 30vh;
+  /* background-image: url(./img/map.png); так тоже можно т.к. положение css файла не меняется */
+  background-size: cover;
+  background-position: center;
+}
+
+/* footer */
+.footer {
+  background: -webkit-linear-gradient(180deg, rgb(231, 247, 244), rgb(18, 121, 124) 76%);
+  background: -moz-linear-gradient(180deg, rgb(231, 247, 244), rgb(18, 121, 124) 76%);
+  background: linear-gradient(180deg, rgb(231, 247, 244), rgb(18, 121, 124) 76%); 
+}
+.container_footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+.include {
+}
+.copyright {
+}
+
+@media (max-width: 500px){
+  .copyright span{
+    display: none;
+  }
+}
+
+
+/* hide */
+/* .header{  display: none;} */
+/* .hero{  display: none;} */
+/* .content{  display: none;} */
+/* .footer{  display: none;} */

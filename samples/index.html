@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <script src="../IncludHtml.js" defer></script>
+
+  <link href="./index.css" rel="stylesheet">
+  <script src="./index.js" defer></script>
+</head>
+<body>
+
+  <div class="container">
+
+    <h1>Примеры использования библиотеки includHtml</h1>
+
+    <ul>
+      <li>
+        <a href="./menu-blocks/">menu-blocks</a>
+        <span class="info">
+
+          <div class="incs" data-incs='{ 
+            incFile: "./menu-blocks/components/info.html#extId2",
+            }'>тут будет заменено из ./menu-blocks/components/info.html#extId2</div> 
+        </span>
+      </li>
+      <li>
+        <a href="./menu-blocks/">menu-blocks</a>
+        <span class="info">Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe repudiandae eos earum ab mollitia ex expedita magnam architecto aliquid aspernatur. Ullam qui beatae atque dicta aspernatur perferendis laborum molestiae fuga!</span>
+      </li>
+    </ul>
+  </div>
+
+  
+</body>
+</html>

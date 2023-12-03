@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <script src="../../IncludHtml.js" defer></script>
+
+  <link href="./index.css" rel="stylesheet">
+  <script src="./index.js" defer></script>
+</head>
+
+<body>
+
+  <div class="incs" data-incs='{ 
+    insertType: "replace", 
+    incFile: "./components/info.html",
+    }'>тут будет заменено из info.html</div>
+
+  <header class="header">
+    <div class="container container_header">
+      <div class="header__logo">logo</div>
+
+      <nav id="navId" class="header__nav">
+        <ul class="header__nav-list">
+          <li class="header__nav-item"><a href="#" title="при срабатывании вызывается обработчик hashChangeHandler">main</a></li>
+          <li class="header__nav-item"><a href="#!products">products</a></li>
+          <li class="header__nav-item"><a href="#!about">about</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container container_hero">
+        <h1 class="hero__title">hero блок title</h1>
+
+        <p class="hero__info">Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt voluptatum dolorum rem
+          quae repellat reprehenderit? Vero, assumenda beatae. Obcaecati, excepturi beatae nulla fuga voluptatibus
+          dolorem labore dolore a quibusdam recusandae.</p>
+        <a href="#footer" title="при нажатии вызывается обработчик localLinkHandler">перейти в конец страницы</a>
+      </div>
+    </section>
+
+    <section class="content">
+
+      <div class="container">
+        <h1 class="content__title">content блок title</h1>
+      </div>
+
+      <!-- тут, внутри div будет меняющееся содержимое -->
+      <div class="container container_content incs-route" data-incs='{ 
+          incFile: "%routePage%%pageParams%", // %pageParams%
+          }'></div>
+
+    </section>
+  </main>
+
+  <footer id="footer" class="footer">
+    <div class="container">
+      <h1 class="footer__title">footer блок title</h1>
+    </div>
+
+    <div class="container container_footer">
+
+      <div class="incs" data-incs='{ 
+        insertType: "replace", 
+        incFromId: "navId",
+        }'>тут будет вставлена копия nav из header</div>
+
+
+      <div class="copyright">© <span>но все права не защищены</span></div>
+    </div>
+  </footer>
+</body>
+
+</html>

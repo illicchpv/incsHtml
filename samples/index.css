@@ -1,0 +1,36 @@
+body{
+  font-family: sans-serif;
+}
+h1{
+  text-align: center;
+}
+ul{
+  list-style: none;
+}
+li{
+  position: relative;
+  margin-bottom: 10px;
+}
+a{
+  text-decoration: none;
+  font-size: 22px;
+  padding-left: 50px;
+  /* background-color: beige; */
+}
+a::before{
+  content: '👉';
+  position: absolute;
+  left: 0px;
+  top: -5px;
+}
+.container{
+  max-width: 1200px;
+  background-color: lightcyan;
+  margin: 0 auto;
+  padding: 20px 10px;
+}
+.info{
+  display: block;
+  margin-left: 50px;
+  font-size: 12px;
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru" style="scroll-behavior: smooth;scroll-behavior: cubic-bezier(0.42, 0, 0.58, 1);">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IncludHtml library</title>
+
+  <!--
+  https://github.com/krasimir/navigo
+  https://github.com/krasimir/navigo/blob/master/DOCUMENTATION.md
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/navigo/8.11.1/navigo.min.js" integrity="sha512-J8D8QABVZk+v5H+5nllq6DgHBiOcmhRjqAgJZm4d4d46JUBc1yrasvzbxbwNFLsK3FZmAS4TnjSyR5j7dyxdpw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+-->
+
+  <script src="../../IncludHtml.js" defer></script>
+</head>
+
+<body>
+
+  <header>
+    <h2>header</h2>
+    <a href="#">main</a>&nbsp;&nbsp;&nbsp;
+    <a href="#!products">products</a>&nbsp;&nbsp;&nbsp;
+    <a href="#!about">about</a>&nbsp;&nbsp;&nbsp;
+
+    <style>
+      p {
+        max-width: 800px;
+      }
+    </style>
+    <hr>
+  </header>
+
+  <main>
+    <section>
+      <h1>hero block</h1>
+      <hr>
+    </section>
+
+    <!-- тут, внутри section будет меняющееся содержимое -->
+    <section class="content incs-route" data-incs='{ 
+            insertType: "append",
+            incInner: false,
+            incFile: "%routePage%%pageParams%", 
+            onLoadCallback: doOnMainLoad }'></section>
+
+  </main>
+
+  <!-- <section class="main incs-route" data-incs='{ 
+    insertType: "append",
+    incInner: false,
+    incFile: "%routePage%%pageParams%", 
+    onLoadCallback: doOnMainLoad }'>
+  </section> -->
+
+  <script>
+    function doOnMainLoad(params) {
+      console.log('function doOnMainLoad')
+    }
+  </script>
+
+  <footer>
+    <hr>
+    <h2>footer</h2>
+    <p>
+      Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+    </p>
+  </footer>
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", async function () {
+
+      IncludHtml.doIncludAll(
+        {
+          insertType: "append",
+          incInner: false,
+          replace: [
+            { from: 'src="../img/', to: 'src="./img/' },
+          ],
+          "incFromId": "extId"
+        },
+        () => { // вызывается когда IncludHtml всё сделал
+          const router = IncludHtml.CreateRouter(routerParams);
+        }
+      );
+
+    });
+
+    const routerParams = {
+      urls: [
+        { url: '', hash: '!main', includ_url: './components/main.html#extId', title: 'main page' },
+        { url: '!main', hash: '!main', includ_url: './components/main.html#extId', title: 'main page' },
+        { url: '!products', hash: '!products', includ_url: './components/products.html#extId', title: 'products page' },
+        { url: '!about', hash: '!about', includ_url: './components/about.html#extId', title: 'about page' },
+      ],
+      hashChangeHandler: (urlObj, pageParams) => { //  (routePage, pageParams) => {
+        // console.log('=============hashchangeHandler', 'urlObj:', urlObj, 'pageParams:', pageParams)
+        // меняем заголовок стр.
+        document.title = urlObj.title
+        // замена содержимого стр.
+        const a = document.querySelectorAll('.incs-route')
+        a.forEach((el) => {
+          el.innerHTML = ''
+          // в результате вызова IncludHtml.doInsertInto
+          // в main добавляются элемены прописанные в его атрибуте data-incs='{ "incFile": "./inc/main.html#extId" }'
+          //  т.е. содержимым ./inc/main.html с id="extId"
+          IncludHtml.doInsertInto(
+            el,
+            () => {
+              console.log("IncludHtml.doInsertInto Finish: Ok");
+            }
+          )
+        })
+      },
+      paramChangeHandler: (urlObj, pageParams) => { //  (routePage, pageParams)
+        // console.log('=============paramChangeHandler', 'urlObj:', urlObj, 'pageParams:', pageParams)
+        routerParams.hashChangeHandler(urlObj, pageParams)
+      },
+      localLinkHandler: (urlObj, pageParams, link) => { //  (routePage, pageParams, link) 
+        // console.log('=============localLinkHandler', 'urlObj:', urlObj, 'pageParams:', pageParams, 'link:', link)
+      },
+    }
+
+  </script>
+</body>
+
+</html>

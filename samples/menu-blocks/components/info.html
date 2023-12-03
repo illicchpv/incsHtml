@@ -1,0 +1,69 @@
+<div id="extId">
+  <div class="about-sample" onclick="this.classList.toggle('about-sample_open')">
+    <style>
+      .about-sample{
+        max-width: 1200px;
+        background-color: lightgreen;
+        margin: 0 auto;
+        padding: 0px 10px 20px;
+        position: relative;
+        cursor: pointer;
+        
+        max-height: 40px;
+        overflow: hidden;
+
+        position: absolute;
+        z-index: 100;
+        left: 0;
+        top: 0;        
+      }
+      .about-sample_open{
+        max-height: unset;
+      }
+      .about-sample::after{
+        content: '';
+        position: absolute;
+        width: 100vw;
+        height: 1px;
+        background-color: red;
+        bottom: 0;
+        left: calc((100% - 100vw)/2);
+      }
+      .about-sample h1 span{
+        font-size: 14px;
+        color: lightslategray;
+      }
+      .about-sample h1 a{
+        float: right;
+        margin-top: 10px;
+        font-size: 14px;
+        color: lightslategray;
+      }
+    </style>
+    <h1>Описание примера 
+      <span>(click)</span>
+      <a href="../" onclick="event.stopPropagation()">другие примеры</a>
+    </h1>
+
+    <div class="incs" data-incs='{ 
+      insertType: "replace", 
+      incFile: "./components/info.html#extId2",
+      }'>тут будет заменено из info.html</div>
+  
+  </div>
+</div>
+
+<div id="extId2">
+  на стр. блоки: <br>
+  <b>[header.nav]</b>  -  из нескольких пунктов: [logo]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menu:[main] [products] [about]<br>
+  <b>[main.hero]</b> - блок шапка с общей информацией<br> 
+  <b>[main.content]</b> - блок с информацией в соответствующей выбранному меню<br> 
+  <b>[footer.nav]</b> - почти как [header.nav] с доп. инфо.<br><br>
+
+  при выборе пункта меню, подсвечивается выбранный [header.nav] и  [footer.nav]<br>
+
+  при выборе пункта меню, [main.hero] не меняется<br>
+
+  при выборе пункта меню, меняется содержимое [main.content]<br>
+
+</div>

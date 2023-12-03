@@ -1,4 +1,15 @@
 // IncludHtml.js
+
+let DO_LOG = false
+
+const _fnLog = function (...params) {
+  let n = 0
+  return (...params) => {
+    if (DO_LOG) console.log(++n + '.', ...params)
+  }
+}()
+const log = (...params) => _fnLog(...params)
+
 let IncludHtml = (function () {
   let _finish_callback = false;
   let _defProps = false;
@@ -6,45 +17,70 @@ let IncludHtml = (function () {
   let _root = document;
   let _currentCall = ''
   let routes = []
+  // this._routerCreated = false;
+
+  const _jsParse = (str) => {
+    return (new Function('return ' + str))(str)
+  }
+  const _parseBool = (val) => { return val === true || val === "true" || val === "True" }
+  async function _doSingleFetch(url) {
+    const r = await fetch(url)
+    if (!r.ok)
+      return { url: url, ok: false, txt: r.status + ' ' + r.statusText, }
+    return { url: url, ok: true, txt: (await r.text()), }
+  }
+  async function _doArrayFetch(urls) {
+    const rs = urls.map(url => _doSingleFetch(url))
+    return await Promise.all(rs)
+  }
+
 
   function doIncludAll(defProps, finish_callback = false) {
     _currentCall = 'doIncludAll'
-    // console.log('-----------', _currentCall)
+    // log('-----------', _currentCall)
     _root = document;
     if (typeof defProps === 'object') {
       _defProps = defProps;
-    } else if (typeof defProps === 'function'){
+    } else if (typeof defProps === 'function') {
       _finish_callback = defProps;
     }
     if (typeof finish_callback === 'function') {
       _finish_callback = finish_callback;
     }
-    if(_defProps.preload){
+    if (_defProps.preload) {
       doPreload(_defProps.preload,
-          () => {
-            console.log('doPreload ready')
-            _doIncludAll(_doIncludAll);
-          })
-    }else{
+        () => {
+          log('doPreload ready')
+          _doIncludAll(_doIncludAll);
+        })
+    } else {
       _doIncludAll(_doIncludAll);
     }
   }
 
-  function doInsertInto(el, finish_callback = false){ // , defProps
+  function doInsertInto(el, finish_callback = false) { // , defProps
     _currentCall = 'doInsertInto'
-    // console.log('-----------', _currentCall)
+    // log('-----------', _currentCall)
     _finish_callback = finish_callback;
     _root = el;
     _doIncludAll(_doIncludAll, el);
   }
 
   function _doIncludAll(doContinue, el) {
-    if(!el){
+    if (!el) {
       let incs = _root.querySelectorAll("." + _selectorClass);
-      // console.log("_doIncludAll - incs.length:", incs.length);
+      // log("_doIncludAll - incs.length:", incs.length);
       if (incs.length <= 0) {
-        if (_finish_callback) _finish_callback();
-        //requestCache = [];
+        if (_finish_callback){
+          // setTimeout(function () {
+          //   debugger
+          //   _finish_callback()
+          // }, 10)
+          _finish_callback()
+          _finish_callback = false
+        }
+        if (_defProps.routerParams)
+          _CreateRouter(_defProps.routerParams)
         return;
       }
       el = incs[0]
@@ -57,7 +93,7 @@ let IncludHtml = (function () {
     // let incs = []
     // if(!el){
     //   incs = _root.querySelectorAll("." + _selectorClass);
-    //   console.log("_doIncludAll - incs.length:", incs.length);
+    //   log("_doIncludAll - incs.length:", incs.length);
     //   if (incs.length <= 0) {
     //     if (_finish_callback) _finish_callback();
     //     requestCache = [];
@@ -82,21 +118,21 @@ let IncludHtml = (function () {
       return;
     }
     try {
-      params = JSON.parse(params);
+      params = _jsParse(params) // JSON.parse(params);
     } catch (e) {
       console.error("Не удалось разобрать параметры!", e, "data-incs=\r\n", params);
     }
-    if(routes['%pageParams%']){
+    if (routes['%pageParams%']) {
       let pp = routes['%pageParams%'].replace('/', '')
       params.incFile = params.incFile
-          .replaceAll(('%routePage%'), routes['%routePage%'])
-          .replaceAll(('%pageParams%'), pp)
-      ;
+        .replaceAll(('%routePage%'), routes['%routePage%'])
+        .replaceAll(('%pageParams%'), pp)
+        ;
     }
     let incFromId = false;
-    if(!params.incFromId && params.incFile.indexOf('#') >= 0){
+    if (!params.incFromId && params.incFile.indexOf('#') >= 0) {
       incFromId = params.incFile.split('#')[1].trim()
-    }else{
+    } else {
       incFromId = _defProps && _defProps.incFromId ? _defProps.incFromId : incFromId;
       incFromId = params && params.incFromId ? params.incFromId : incFromId;
     }
@@ -122,7 +158,10 @@ let IncludHtml = (function () {
         }
       } else {
         // вставка элемента из документа внешнего html файла
-        const url = params.incFile;
+        let url = params.incFile;
+        url = url.replaceAll('%routePage%', routes['%routePage%'] ?? '')
+        url = url.replaceAll('%pageParams%', routes['%pageParams%'] ?? '')
+        log('_doIncludSingle url: ', url, 'params.incFile: ', params.incFile);
         if (!url) {
           console.error("IncludHtml - не задана extUrl");
           return;
@@ -137,18 +176,21 @@ let IncludHtml = (function () {
   const requestCache = [];
   function fetchOrCache(url, incFromId, callback) {
     // debugger
-    if(url.indexOf('#') >= 0){
+    if (url.indexOf('#') >= 0) {
       url = url.split('#')[0].trim()
     }
     if (requestCache[url]) {
-      try{
-        const extEl = requestCache[url].getElementById(incFromId).cloneNode(true);
+      try {
+        const el = requestCache[url].getElementById(incFromId)
+        if (!el)
+          throw `элемент не найден ${url} - ${incFromId}`
+        const extEl = el.cloneNode(true);
         callback(extEl);
-      }catch(e){
+      } catch (e) {
         console.error("Ошибка при одработке документа в requestCache", e)
       }
     } else {
-      console.log('+++++fetch url: ', url, incFromId) //, callback)
+      log('+++++fetch url: ', url, incFromId) //, callback)
       fetch(url)
         .then((response) => {
           if (response.ok) {
@@ -157,7 +199,7 @@ let IncludHtml = (function () {
         })
         .then((data) => {
           if (data) {
-            // console.log('\\\+++++fetch url: ', url, incFromId)
+            // log('\\\+++++fetch url: ', url, incFromId)
             const parser = new DOMParser(),
               content = "text/html",
               DOM = parser.parseFromString(data, content);
@@ -182,7 +224,7 @@ let IncludHtml = (function () {
         .catch((error) => {
           console.error("Fetch error: ", error);
         })
-      ;
+        ;
     }
   }
   function _doProcess(params, doContinue) {
@@ -190,26 +232,33 @@ let IncludHtml = (function () {
     let incInner = true;
     let replace = [];
 
-    // if(params && typeof(params.incInner) === 'boolean'){
-    //   incInner = params.incInner
-    // } else {
-    //   incInner = _defProps && typeof(_defProps.incInner) === 'boolean' ? _defProps.incInner : incInner;
+    let summParams = {insertType: insertType,  incInner: incInner,  }
+    Object.assign(summParams, _defProps)
+    Object.assign(summParams, params)
+    insertType = summParams.insertType ? summParams.insertType : insertType;
+    incInner = typeof (summParams.incInner) === 'boolean' ? summParams.incInner : incInner;
+
+    // // if(params && typeof(params.incInner) === 'boolean'){
+    // //   incInner = params.incInner
+    // // } else {
+    // //   incInner = _defProps && typeof(_defProps.incInner) === 'boolean' ? _defProps.incInner : incInner;
+    // // }
+    //
+    // insertType = _defProps && _defProps.insertType ? _defProps.insertType : insertType;
+    // incInner = _defProps && typeof (_defProps.incInner) === 'boolean' ? _defProps.incInner : incInner;
+    //
+    // if (params) {
+    //   insertType = params.insertType ? params.insertType : insertType;
+    //   // if(typeof(params.incInner) === 'string'){
+    //   //   params.incInner = (params.incInner).trim().toLowerCase()
+    //   //   if(params.incInner === "true")
+    //   //     params.incInner = true
+    //   //   if(params.incInner === "false")
+    //   //     params.incInner = false
+    //   // }
+    //   if(params.incInner !== undefined) params.incInner = _parseBool(params.incInner)
+    //   incInner = typeof (params.incInner) === 'boolean' ? params.incInner : incInner;
     // }
-
-    insertType = _defProps && _defProps.insertType ? _defProps.insertType : insertType;
-    incInner = _defProps && typeof(_defProps.incInner) === 'boolean' ? _defProps.incInner : incInner;
-
-    if(params){
-      insertType = params.insertType ? params.insertType : insertType;
-      if(typeof(params.incInner) === 'string'){
-        params.incInner = (params.incInner).trim().toLowerCase()
-        if(params.incInner === "true")
-          params.incInner = true
-        if(params.incInner === "false")
-          params.incInner = false
-      }
-      incInner = typeof(params.incInner) === 'boolean' ? params.incInner : incInner;
-    }
 
     if (_defProps && _defProps.replace) {
       replace = !Array.isArray(_defProps.replace)
@@ -236,9 +285,11 @@ let IncludHtml = (function () {
         }
       });
     }
+
     const cb = params.onLoadCallback;
     if (cb) {
-      const handler = eval(`(p)=>{ ${cb}(p); }`);
+      const handler = (typeof (cb) === 'function') ? cb : eval(`(p)=>{ ${cb}(p); }`);
+      Object.assign(params, { routePage: routes['%routePage%'], pageParams: routes['%pageParams%'], })
       try {
         handler(params);
       } catch (e) {
@@ -253,9 +304,9 @@ let IncludHtml = (function () {
     // }
 
     // debugger
-    // console.log('++++++++', _currentCall);
-    if(_currentCall !== 'doIncludAll'){
-      // console.log(_currentCall , "(_currentCall != 'doIncludAll')")
+    // log('++++++++', _currentCall);
+    if (_currentCall !== 'doIncludAll') {
+      // log(_currentCall , "(_currentCall != 'doIncludAll')")
       incInner = true;
       // insertType = 'replace';
       _currentCall = 'doIncludAll'
@@ -297,12 +348,16 @@ let IncludHtml = (function () {
   let hashChangeHandlerExt = false;
   let paramChangeHandlerExt = false;
   let localLinkHandlerExt = false;
-  function CreateRouter({urls, hashChangeHandler, paramChangeHandler, localLinkHandler}){
-    // console.log('CreateRouter', routes, hashChangeHandler, paramChangeHandler)
+  function _CreateRouter({ urls, hashChangeHandler, paramChangeHandler, localLinkHandler }) {
+    // log('_CreateRouter', routes, hashChangeHandler, paramChangeHandler)
+    if (hashChangeHandlerExt)
+      return
+    log('----------_CreateRouter????')
+
     hashChangeHandlerExt = hashChangeHandler
     paramChangeHandlerExt = paramChangeHandler
     localLinkHandlerExt = localLinkHandler
-    for(const el of  urls){
+    for (const el of urls) {
       routes[el.url] = el
     }
     // вспомогательные 👇
@@ -312,89 +367,106 @@ let IncludHtml = (function () {
     routes['%pageParams%'] = ''
 
     _hashchangeHandler();
-    window.addEventListener('hashchange', _hashchangeHandler);    
+    window.addEventListener('hashchange', _hashchangeHandler);
+    // this._routerCreated = true
   }
   const _hashchangeHandler = () => {
-    let curHash = location.hash.replaceAll('#','')
-    curHash = (curHash === '' ?  routes[''].hash : curHash)
+    let curHash = location.hash.replaceAll('#', '')
+    curHash = (curHash === '' ? routes[''].hash : curHash)
     let curHash0 = curHash.split('/')[0]
-    if(curHash.startsWith('!')){
-      let pageParams = curHash.split('/').reduce((s,el,i) => {return i > 0 ? s + '/' + el : s;}, '')
-      if(location.hash.replaceAll('#','') !== curHash){
+    if (curHash.startsWith('!')) {
+      let pageParams = curHash.split('/').reduce((s, el, i) => { return i > 0 ? s + '/' + el : s; }, '')
+      if (location.hash.replaceAll('#', '') !== curHash) {
         routes['%lastHash%'] = curHash
         routes['%lastHash0%'] = curHash0
-        console.log('set location.hash = curHash:', curHash)
+        log('set location.hash = curHash:', curHash)
         window.history.replaceState({}, null, location.href.split('#')[0] + '#' + curHash);
       }
       let includ_url = ''
       let def_param = ''
-      try{
-        if(!routes[curHash0]){
+      try {
+        if (!routes[curHash0]) {
           console.error('Unsupported route:' + curHash0)
           window.history.replaceState({}, null, location.href.split('#')[0] + '#' + routes['%lastHash%']);
           return
         }
         includ_url = routes[curHash0].includ_url
-        if(!includ_url) {
+        if (!includ_url) {
           throw 'unsupported route [' + curHash0 + ']'
         }
-        if(routes[curHash0].def_param)
+        if (routes[curHash0].def_param)
           def_param = routes[curHash0].def_param
-      }catch(e){
+      } catch (e) {
         console.error('IncludHtml.routes["' + curHash0 + '"].includ_url\r\n', e)
         window.history.replaceState({}, null, location.href.split('#')[0] + '#' + routes['%lastHash%']);
         return;
       }
       routes['%lastHash%'] = curHash
       routes['%lastHash0%'] = curHash0
-      pageParams  = pageParams || def_param
+      pageParams = pageParams || def_param
       let pageParamsChanged = routes['%pageParams%'] !== pageParams;
       routes['%pageParams%'] = pageParams
-      if(routes['%routePage%'] !== includ_url){
-        // console.log('Render content for INCLUD url:', includ_url, ' prev INCLUD url:', IncludHtml.routes['%routePage%'], 'pageParams:', IncludHtml.routes['%pageParams%'])
+      if (routes['%routePage%'] !== includ_url) {
+        // log('Render content for INCLUD url:', includ_url, ' prev INCLUD url:', IncludHtml.routes['%routePage%'], 'pageParams:', IncludHtml.routes['%pageParams%'])
         routes['%routePage%'] = includ_url
         hashChangeHandlerExt && hashChangeHandlerExt(routes[curHash0], routes['%pageParams%']);
-      }else{
-        if(pageParamsChanged){
-          // console.log("pageParamsChanged '%pageParams%': ", IncludHtml.routes['%pageParams%']);
+      } else {
+        if (pageParamsChanged) {
+          // log("pageParamsChanged '%pageParams%': ", IncludHtml.routes['%pageParams%']);
           paramChangeHandlerExt && paramChangeHandlerExt(routes[curHash0], routes['%pageParams%'])
         }
       }
-    }else{
-      // console.log('Link to Inner ref: ' + location.hash)
-      const link = location.hash 
+    } else {
+      // log('Link to Inner ref: ' + location.hash)
+      const link = location.hash
       window.history.replaceState({}, null, location.href.split('#')[0] + '#' + routes['%lastHash%']);
       localLinkHandlerExt && localLinkHandlerExt(routes[routes['%lastHash0%']], routes['%pageParams%'], link)
     }
   }
-  async function _preloadIncluds(urls){
-    const data = Promise.all(
-      urls.map(async (url) => ({
-          url: url,
-          r: url.endsWith('.json')
-              ? await (await fetch(url)).json()
-              : await (await fetch(url)).text()
-              ,
-        }))
-    )
-    let pp = await data
-    pp.forEach(el => {
-      let data = el.r
-      let url = el.url
-      if(url.endsWith('.json') || url.endsWith('.txt')){
-        requestCache[url] = data
-      }else{
-        const parser = new DOMParser(),
+  async function _preloadIncluds(urls) {
+    const rs = await _doArrayFetch(urls)
+    rs.forEach(el => {
+      if (el.ok) {
+        let url = el.url.toLowerCase()
+        if (url.endsWith('.json')) {
+          ``
+          requestCache[url] = JSON.parse(el.txt)
+        } else if (url.includes('.htm')) {
+          const parser = new DOMParser(),
             content = "text/html",
-            DOM = parser.parseFromString(data, content);
-        requestCache[url] = DOM.cloneNode(true);
+            DOM = parser.parseFromString(el.txt, content);
+          requestCache[url] = DOM.cloneNode(true);
+        } else {
+          requestCache[url] = el.txt;
+        }
+      } else {
+        console.warn('url: ', el.url, el.txt);
       }
     })
-    return data
   }
-  async function doPreload(urls, onReadyPreload){
+  async function doPreload(urls, onReadyPreload) {
     await _preloadIncluds(urls)
-    if(onReadyPreload) onReadyPreload()
+    if (onReadyPreload) onReadyPreload()
+  }
+
+  function markSelectedLink(routerParams, urlObj, className, selectedClassName) {
+    let defUrl = false
+    for (const el of routerParams.urls) {
+      if (el.url === "") {
+        defUrl = el.hash; break
+      }
+    }
+    document.querySelectorAll('.' + className).forEach(el => el.classList.remove(selectedClassName))
+    {
+      const selector = `a[href='#${urlObj.hash}']`
+      const selectedHrefs = document.querySelectorAll(selector)
+      selectedHrefs.forEach(el => el.parentElement.classList.add(selectedClassName))
+    }
+    if (defUrl === urlObj.hash) {
+      const selector = `a[href='#']`
+      const selectedHrefs = document.querySelectorAll(selector)
+      selectedHrefs.forEach(el => el.parentElement.classList.add(selectedClassName))
+    }
   }
 
   return {
@@ -405,6 +477,6 @@ let IncludHtml = (function () {
     doIncludAll,
     doInsertInto,
 
-    CreateRouter,
+    markSelectedLink,
   };
 })();
