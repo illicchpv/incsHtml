@@ -76,7 +76,7 @@ let IncludHtml = (function () {
           //   debugger
           //   _finish_callback()
           // }, 10)
-          _finish_callback()
+          _finish_callback(_defProps)
           _finish_callback = false
         }
         if (_defProps.routerParams)
@@ -187,7 +187,7 @@ let IncludHtml = (function () {
         const extEl = el.cloneNode(true);
         callback(extEl);
       } catch (e) {
-        console.error("Ошибка при одработке документа в requestCache", e)
+        console.error("Ошибка при обработке документа в requestCache:", e)
       }
     } else {
       log('+++++fetch url: ', url, incFromId) //, callback)
@@ -348,6 +348,7 @@ let IncludHtml = (function () {
   let hashChangeHandlerExt = false;
   let paramChangeHandlerExt = false;
   let localLinkHandlerExt = false;
+  let urlsExt = false
   function _CreateRouter({ urls, hashChangeHandler, paramChangeHandler, localLinkHandler }) {
     // log('_CreateRouter', routes, hashChangeHandler, paramChangeHandler)
     if (hashChangeHandlerExt)
@@ -357,6 +358,7 @@ let IncludHtml = (function () {
     hashChangeHandlerExt = hashChangeHandler
     paramChangeHandlerExt = paramChangeHandler
     localLinkHandlerExt = localLinkHandler
+    urlsExt = urls
     for (const el of urls) {
       routes[el.url] = el
     }
@@ -374,6 +376,8 @@ let IncludHtml = (function () {
     let curHash = location.hash.replaceAll('#', '')
     curHash = (curHash === '' ? routes[''].hash : curHash)
     let curHash0 = curHash.split('/')[0]
+    curHash0 = curHash // не разделяем hash и параметры
+
     if (curHash.startsWith('!')) {
       let pageParams = curHash.split('/').reduce((s, el, i) => { return i > 0 ? s + '/' + el : s; }, '')
       if (location.hash.replaceAll('#', '') !== curHash) {
@@ -409,18 +413,19 @@ let IncludHtml = (function () {
       if (routes['%routePage%'] !== includ_url) {
         // log('Render content for INCLUD url:', includ_url, ' prev INCLUD url:', IncludHtml.routes['%routePage%'], 'pageParams:', IncludHtml.routes['%pageParams%'])
         routes['%routePage%'] = includ_url
-        hashChangeHandlerExt && hashChangeHandlerExt(routes[curHash0], routes['%pageParams%']);
+        hashChangeHandlerExt && hashChangeHandlerExt(urlsExt, routes[curHash0], routes['%pageParams%']);
       } else {
         if (pageParamsChanged) {
           // log("pageParamsChanged '%pageParams%': ", IncludHtml.routes['%pageParams%']);
-          paramChangeHandlerExt && paramChangeHandlerExt(routes[curHash0], routes['%pageParams%'])
+          paramChangeHandlerExt && paramChangeHandlerExt(urlsExt, routes[curHash0], routes['%pageParams%'])
+          hashChangeHandlerExt && hashChangeHandlerExt(urlsExt, routes[curHash0], routes['%pageParams%']);
         }
       }
     } else {
       // log('Link to Inner ref: ' + location.hash)
       const link = location.hash
       window.history.replaceState({}, null, location.href.split('#')[0] + '#' + routes['%lastHash%']);
-      localLinkHandlerExt && localLinkHandlerExt(routes[routes['%lastHash0%']], routes['%pageParams%'], link)
+      localLinkHandlerExt && localLinkHandlerExt(urlsExt, routes[routes['%lastHash0%']], routes['%pageParams%'], link)
     }
   }
   async function _preloadIncluds(urls) {
@@ -449,9 +454,9 @@ let IncludHtml = (function () {
     if (onReadyPreload) onReadyPreload()
   }
 
-  function markSelectedLink(routerParams, urlObj, className, selectedClassName) {
+  function markSelectedLink(urls, urlObj, className, selectedClassName) {
     let defUrl = false
-    for (const el of routerParams.urls) {
+    for (const el of urls) {
       if (el.url === "") {
         defUrl = el.hash; break
       }
