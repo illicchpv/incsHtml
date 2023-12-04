@@ -70,8 +70,8 @@ ul{
   text-decoration: underline;
   background-color: rgba(250, 234, 214, 0.5);
 }
-.header__nav-item_selected a{
-  background-color: rgba(250, 234, 214, 0.5);
+.nav-item_selected a{
+  background-color: rgba(179, 156, 129, 0.5);
 }
 
 /* hero */
@@ -145,7 +145,11 @@ ul{
   padding: 10px  4px;
   margin-bottom: 20px;
 }
-.content-about__info_selected{
+.content-about__info.nav-item_selected{
+  background-color: bisque;
+  text-align: right;
+}
+.content-about__info.nav-item_selected a{
   background-color: bisque;
 }
 .content-about__map {

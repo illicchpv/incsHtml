@@ -71,11 +71,7 @@ let IncludHtml = (function () {
       let incs = _root.querySelectorAll("." + _selectorClass);
       // log("_doIncludAll - incs.length:", incs.length);
       if (incs.length <= 0) {
-        if (_finish_callback){
-          // setTimeout(function () {
-          //   debugger
-          //   _finish_callback()
-          // }, 10)
+        if (_finish_callback) {
           _finish_callback(_defProps)
           _finish_callback = false
         }
@@ -123,7 +119,7 @@ let IncludHtml = (function () {
       console.error("Не удалось разобрать параметры!", e, "data-incs=\r\n", params);
     }
     if (routes['%pageParams%']) {
-      let pp = routes['%pageParams%'].replace('/', '')
+      let pp = routes['%pageParams%'].replaceAll('/', '')
       params.incFile = params.incFile
         .replaceAll(('%routePage%'), routes['%routePage%'])
         .replaceAll(('%pageParams%'), pp)
@@ -232,7 +228,7 @@ let IncludHtml = (function () {
     let incInner = true;
     let replace = [];
 
-    let summParams = {insertType: insertType,  incInner: incInner,  }
+    let summParams = { insertType: insertType, incInner: incInner, }
     Object.assign(summParams, _defProps)
     Object.assign(summParams, params)
     insertType = summParams.insertType ? summParams.insertType : insertType;
@@ -284,6 +280,18 @@ let IncludHtml = (function () {
           console.warn("ошибка при выполнении замены r:", r, "err:", e);
         }
       });
+    }
+    if (routes['%routePage%']) {
+      const pp = routes['%routePage%'].replaceAll('/', '_')
+      params.extEl.innerHTML = params.extEl.innerHTML.replaceAll('%routePage%', pp)
+    } else {
+      params.extEl.innerHTML = params.extEl.innerHTML.replaceAll('%routePage%', '')
+    }
+    if (routes['%pageParams%']) {
+      const pp = routes['%pageParams%'].replaceAll('/', '_')
+      params.extEl.innerHTML = params.extEl.innerHTML.replaceAll('%pageParams%', pp)
+    } else {
+      params.extEl.innerHTML = params.extEl.innerHTML.replaceAll('%pageParams%', '')
     }
 
     const cb = params.onLoadCallback;
@@ -394,6 +402,7 @@ let IncludHtml = (function () {
           window.history.replaceState({}, null, location.href.split('#')[0] + '#' + routes['%lastHash%']);
           return
         }
+        pageParams = routes[curHash0].hash.split('/').reduce((s, el, i) => { return i > 0 ? s + '/' + el : s; }, '')
         includ_url = routes[curHash0].includ_url
         if (!includ_url) {
           throw 'unsupported route [' + curHash0 + ']'
@@ -428,6 +437,7 @@ let IncludHtml = (function () {
       localLinkHandlerExt && localLinkHandlerExt(urlsExt, routes[routes['%lastHash0%']], routes['%pageParams%'], link)
     }
   }
+
   async function _preloadIncluds(urls) {
     const rs = await _doArrayFetch(urls)
     rs.forEach(el => {
@@ -471,6 +481,17 @@ let IncludHtml = (function () {
       const selector = `a[href='#']`
       const selectedHrefs = document.querySelectorAll(selector)
       selectedHrefs.forEach(el => el.parentElement.classList.add(selectedClassName))
+    }
+
+
+    const arr = urlObj.hash.split('/') // при выбре "#!products/1" должны помечаться и "#!products"
+    if (arr.length > 1 && arr[1]) { // если в urlObj.hash присутствуют параметры помечаем все href начинающиеся с части hash до /
+      const cmn = arr[0]
+      if (cmn) {
+        const selector = `a[href='#${cmn}']`
+        const selectedHrefs = document.querySelectorAll(selector)
+        selectedHrefs.forEach(el => el.parentElement.classList.add(selectedClassName))
+      }
     }
   }
 

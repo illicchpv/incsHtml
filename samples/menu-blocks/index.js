@@ -23,16 +23,16 @@ const routerParams = {
     { url: '', hash: '!main', includ_url: './components/main.html#extId', title: 'main page' },
     { url: '!main', hash: '!main', includ_url: './components/main.html#extId', title: 'main page' },
     { url: '!products', hash: '!products', includ_url: './components/products.html#extId', title: 'products page' },
-    // { url: '!products/1', hash: '!products/1', includ_url: './components/products.html#extId', title: 'products page' },
-    { url: '!about', hash: '!about', includ_url: './components/about.html#extId', title: 'about page' },
+    { url: '!about', hash: '!about/1', includ_url: './components/about.html#extId', title: 'about page' },
+    { url: '!about/1', hash: '!about/1', includ_url: './components/about.html#extId', title: 'about page' },
+    { url: '!about/2', hash: '!about/2', includ_url: './components/about.html#extId', title: 'about page' },
+    { url: '!about/3', hash: '!about/3', includ_url: './components/about.html#extId', title: 'about page' },
   ],
 
   // вызывается при изменении url стр.
   hashChangeHandler: (urls, urlObj, pageParams) => { //  (urlObj - [эемент из urls], pageParams) => {
     console.log('=============hashchangeHandler', 'urlObj:', urlObj, 'pageParams:', pageParams)
     { // отрисовка нового варианта стр.
-      // помечаем <a с подходящими текущему urlObj href
-      IncludHtml.markSelectedLink(urls, urlObj, 'header__nav-item', 'header__nav-item_selected')
 
       // меняем заголовок стр.
       document.title = urlObj.title
@@ -49,6 +49,10 @@ const routerParams = {
           }
         )
       })
+
+      // помечаем <a с подходящими текущему urlObj href
+      // console.log("помечаем <a с подходящими текущему urlObj href");
+      IncludHtml.markSelectedLink(urls, urlObj, 'nav-item', 'nav-item_selected')
     }
   },
 

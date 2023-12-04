@@ -25,10 +25,9 @@
 
       <nav id="navId" class="header__nav">
         <ul class="header__nav-list">
-          <li class="header__nav-item"><a href="#" title="при срабатывании вызывается обработчик hashChangeHandler">main</a></li>
-          <li class="header__nav-item"><a href="#!products">products</a></li>
-          <!-- <li class="header__nav-item"><a href="#!products/1">products/1</a></li> -->
-          <li class="header__nav-item"><a href="#!about">about</a></li>
+          <li class="header__nav-item nav-item"><a href="#" title="при срабатывании вызывается обработчик hashChangeHandler">main</a></li>
+          <li class="header__nav-item nav-item"><a href="#!products">products</a></li>
+          <li class="header__nav-item nav-item"><a href="#!about">about</a></li>
         </ul>
       </nav>
     </div>
@@ -54,7 +53,7 @@
 
       <!-- тут, внутри div будет меняющееся содержимое -->
       <div class="container container_content incs-route" data-incs='{ 
-          incFile: "%routePage%%pageParams%", // %pageParams%
+          incFile: "%routePage%", // %pageParams%
           }'></div>
 
     </section>

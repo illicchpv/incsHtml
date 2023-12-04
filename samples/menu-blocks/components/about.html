@@ -4,6 +4,7 @@
     <h3>О нас</h3>
 
     <p>
+      %routePage% %pageParams%
       мы такие хорошие. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio assumenda dicta soluta quos quia voluptates, 
       incidunt optio minima sint ipsam laudantium, saepe consequuntur at beatae officiis ullam expedita sapiente deserunt?
     </p>
@@ -13,20 +14,20 @@
     <div class="content-about__on-map">
 
       <content-about__infos>
-        <div class="content-about__info">
-          офис 1 тут 
+        <div class="content-about__info nav-item">
+          <a  href="#!about/1">офис 1 тут </a>
+        </div>
+<!--  content-about__info_selected  -->
+        <div class="content-about__info nav-item">
+          <a  href="#!about/2">офис 2 тут </a>
         </div>
 
-        <div class="content-about__info content-about__info_selected">
-          офис 2 тут 
-        </div>
-
-        <div class="content-about__info">
-          офис 3 тут 
+        <div class="content-about__info nav-item">
+          <a  href="#!about/3">офис 3 тут </a>
         </div>
       </content-about__infos>
 
-      <div class="content-about__map" style="background-image: url(../img/map.png);">
+      <div class="content-about__map" style="background-image: url(../img/map%pageParams%.png);">
 
       </div>
 
