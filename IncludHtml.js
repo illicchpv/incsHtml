@@ -132,6 +132,8 @@ let IncludHtml = (function () {
       incFromId = _defProps && _defProps.incFromId ? _defProps.incFromId : incFromId;
       incFromId = params && params.incFromId ? params.incFromId : incFromId;
     }
+    if(incFromId === false) incFromId = 'extId'
+
     // let errSt = !params;
     // errSt = errSt || !incFromId
     if (incFromId && params) {
@@ -444,7 +446,6 @@ let IncludHtml = (function () {
       if (el.ok) {
         let url = el.url.toLowerCase()
         if (url.endsWith('.json')) {
-          ``
           requestCache[url] = JSON.parse(el.txt)
         } else if (url.includes('.htm')) {
           const parser = new DOMParser(),

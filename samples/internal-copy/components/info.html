@@ -1,4 +1,4 @@
-<div id="extId">
+<div id="extId" class="info">
   <div class="about-sample" onclick="this.classList.toggle('about-sample_open')">
     <style>
       .about-sample{
@@ -55,21 +55,15 @@
       insertType: "replace", 
       incFile: "./components/info.html#extId2",
       }'>тут будет заменено из info.html</div>
-  
   </div>
 </div>
 
 <div id="extId2">
-  на стр. блоки: <br>
-  <b>[header.nav]</b>  -  из нескольких пунктов: [logo]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menu:[main] [products] [about]<br>
-  <b>[main.hero]</b> - блок шапка с общей информацией<br> 
-  <b>[main.content]</b> - блок с информацией в соответствующей выбранному меню<br> 
-  <b>[footer.nav]</b> - почти как [header.nav] с доп. инфо.<br><br>
-
-  при выборе пункта меню, подсвечивается выбранный [header.nav] и  [footer.nav]<br>
-
-  при выборе пункта меню, [main.hero] не меняется<br>
-
-  при выборе пункта меню, меняется содержимое [main.content]<br>
-
+  <pre>
+      В этом примере показывается как в рамках одной страницы копировать 
+    блок(В качестве примера блока используется кнопка.) 
+    
+      Её копии с изменёнными свойствами, вставляются 
+    в несколько мест документа
+  </pre>
 </div>

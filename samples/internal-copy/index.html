@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <script src="../../IncludHtml.js" defer></script>
+
+  <link href="./index.css" rel="stylesheet">
+  <script src="./index.js" defer></script>
+</head>
+
+<body>
+
+  <div class="incs" data-incs='{ 
+    incFile: "./components/info.html",
+    }'>тут будет заменено из info.html</div>
+
+  <div class="container">
+    <div class="variants">
+      <div class="variant">
+        <div class="variant__descr">
+          исходный button который используется как заготовка
+        </div>
+        <div class="variant__sample">
+          <button class="button-test" id="button1" onclick="alert('у этой кнопки id: [' + this.id + ']')">button1 text</button>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant__descr">
+          копия button1 c измененным текстом, Id и добавлен класс:
+        </div>
+        <div class="variant__sample">
+          <div class="incs" data-incs='{
+              insertType: "replace", incInner: false, "incFromId": "button1", // элемент будет заменён найденным по id 
+              onLoadCallback(params){
+                params.extEl.innerHTML = "new text1"
+                params.extEl.className += " button-test_new-class1"
+                params.extEl.id = "newId1"
+              },
+            }'></div>
+        </div>
+      </div>
+
+      <div class="variant">
+        <div class="variant__descr">
+          копия button1 c измененным текстом, Id и добавлен класс:
+        </div>
+        <div class="variant__sample">
+          <div class="incs" data-incs='{
+              insertType: "replace", incInner: false, "incFromId": "button1", // элемент будет заменён найденным по id 
+              onLoadCallback(params){
+                params.extEl.innerHTML = "new text2"
+                params.extEl.className += " button-test_new-class2"
+                params.extEl.id = "newId2"
+              },
+            }'></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
