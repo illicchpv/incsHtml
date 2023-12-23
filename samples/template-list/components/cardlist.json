@@ -1,0 +1,22 @@
+[
+  {
+    "title": "первая карточка",
+    "description": "Описание первой карточки dlkjsdl kjsd lksdj lksdj lsdkj lsdkj lsdkj sdsd",
+    "image": "logo512.png"
+  },
+  {
+    "title": "вторая карточка",
+    "description": "Вторая карточка описана тут dlkjsdl kjsd lksdj lksdsd lksdj lksdj lsdkj lssd lksdj lksdj lsdkj lssd lksdj lksdj lsdkj lssd lksdj lksdj lsdkj ls",
+    "image": "logo512.png"
+  },
+  {
+    "title": "третья ",
+    "description": "Карточка номер 3 описывается коротко dlkjsdl kjsd lksdj lksdsdsd",
+    "image": "logo512.png"
+  },
+  {
+    "title": "четвертая ",
+    "description": "Четвёртая карточка тут. dlkjsdl kjsd lksdj lksdj lsdkj ls sd lksdj lksdj lsdkj lsdkj lsdkj sdsd",
+    "image": "logo512.png"
+  }
+]

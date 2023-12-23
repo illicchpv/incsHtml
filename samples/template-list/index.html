@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <script src="../../IncludHtml.js" defer></script>
+
+  <link href="./index.css" rel="stylesheet">
+  <link href="./components/card.css" rel="stylesheet">
+  <script src="./index.js" defer></script>
+</head>
+
+<body>
+
+  <div class="incs" data-incs='{ 
+    incFile: "./components/info.html",
+    }'>тут будет заменено из info.html</div>
+
+  <div class="container">
+
+    <h2>Список формируется из cardList.json используя шаблон card.html</h2>
+    <hr>
+
+    <div class="card-list">
+      <div class="incs" data-incs='{ 
+        incFile: "./components/card.html",
+        onLoadCallback: onLoad,
+        }'>тут будет заменено списком из card.html основываясь на cardList.json</div>
+    </div>
+
+  </div>
+  <script>
+    function onLoad(params){
+      const cardList = IncludHtml.requestCache['./components/cardlist.json']
+      const htempl = params.extEl.innerHTML
+      const hList = cardList.map(card => 
+        htempl
+          .replaceAll('{title}', card.title)
+          .replaceAll('{description}', card.description)
+          .replaceAll('{image}', card.image)
+      )
+      params.extEl.innerHTML = hList.join('')
+    }
+  </script>
+</body>
+
+</html>
