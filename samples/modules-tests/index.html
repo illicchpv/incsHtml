@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <title>Document</title>
+
+  <script>var isLocal = false; var isMainLocal = true;</script>
+  <script src="./isLocal.js"></script>
+  <script>
+    var modulesUrl = isLocal ? './modules/' : '//aclive.ru/modules-tests/modules/'
+  </script>
+  
+<!-- local основные скрипты
+-->
+<script>isMainLocal = true;</script>
+<script src="./modules/utils.js" defer></script>
+<script src="./modules/IncludHtml.js" defer></script>
+<script src="./modules/modulesLoader.js" defer></script>
+<!-- host основные скрипты
+<script>isMainLocal = false;</script>
+<script src="//aclive.ru/modules-tests/modules/utils.js" defer></script>
+<script src="//aclive.ru/modules-tests/modules/IncludHtml.js" defer></script>
+<script src="//aclive.ru/modules-tests/modules/modulesLoader.js" defer></script>
+-->
+<!-- -->
+<script>console.log('isLocal: ', isLocal, 'isMainLocal:', isMainLocal) </script>
+
+
+  <link href="./index.css" rel="stylesheet">
+  <script src="./index.js" defer></script>
+  
+</head>
+
+<body>
+
+  <div class="container container_mminimal">
+    <div class="incs" data-incs='{ 
+        incFile: modulesUrl + "mminimal/mminimal.html",
+        onLoadCallback(el){
+          const iname = "instance1";
+          const inst = mminimal.createInstance(iname);
+          inst.counter = 30;
+          el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+        },
+    }'>этот элемент будет заменён из mminimal.html</div>
+
+  
+  <div class="container legend" style="display: -none;">
+    <h1>легенда</h1>
+    <ul class="legend__list">
+      <li class="legend__li">модули типа \module1\ - станции</li>
+      <li class="legend__li">каждой станции можно кнопками задавать количество датчиков [1 - 10 (ival)]</li>
+      <li class="legend__li">через интервалы времени станции считывают показатели на своих датчиках [1 - 100 (dval)]</li>
+      <li class="legend__li">модули типа \module2\ - информационный центр</li>
+      <li class="legend__li">у \module2\ - можно задавать критический уровень (dvalCritical) [1 - 100 (dval)] </li>
+      <li class="legend__li">\module2\ работает по своему таймеру: </li>
+      <li class="legend__li">он обращается к модулям типа \module1\ заданным в поле (inst.lookInstances = "module1.test1;module1.test2";) 
+        и считывает интегральные показатели: усреднённое значение показаний превышающих (dvalCritical) 
+        vcrit1 + vcrit2 / nvCrit
+      </li>
+      <li class="legend__li">усредняет полученные средние значения v1+v2.../nv</li>
+      <li class="legend__li">на основании считанного числа показателей превышающих (dvalCritical) 
+        строит график x-номер опроса y-общее число превышающих показаний </li>
+      <li class="legend__li">при изменении количества датчиков у какого-то \module1\, график \module2\ обнуляется</li>
+    </ul>
+  </div>
+
+  <div class="container container_timer" style="display: -none;">
+    <div class="timer">
+      <h2 class="timer__title">
+        обновление номер: 
+        <span class="timer__fetch-nom">0</span>
+      </h2>
+    </div>
+  </div>
+
+  <div class="container container_module1" style="display: -none;">
+    <div class="incs" data-incs='{ 
+        incFile: modulesUrl + "module1/module1.html",
+        onLoadCallback(el){
+          const iname = "test1";
+          const inst = module1.createInstance(iname)
+          inst.ival = 3; inst.color = "blue";
+          el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+        },
+    }'>этот элемент будет заменён из module1.html</div>
+
+    <div class="incs" data-incs='{ 
+        incFile: modulesUrl + "module1/module1.html",
+        onLoadCallback(el){
+          const iname = "test2";
+          const inst = module1.createInstance(iname)
+          inst.ival = 5; inst.color = "green";
+          el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+        },
+    }'>этот элемент будет заменён из module1.html</div>
+
+  </div>
+
+  <div class="container container_module2">
+    <div class="incs" data-incs='{ 
+        incFile: modulesUrl + "module2/module2.html",
+        onLoadCallback(el){
+          const iname = "processor";
+          const inst = module2.createInstance(iname);
+          inst.dvalCritical = 30;
+          inst.lookInstances = "module1.test1;module1.test2";
+          el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+        },
+    }'>этот элемент будет заменён из module2.html</div>
+
+  </div>
+  <!-- -->
+</body>
+
+</html>

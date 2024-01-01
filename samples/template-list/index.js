@@ -1,8 +1,11 @@
+const componentsUrl = "https://aclive.ru/Methed-lib/template-list/"
+const jsonUrl = (componentsUrl + "cardList.json").toLowerCase()
+
 document.addEventListener("DOMContentLoaded", async function () {
 
   IncludHtml.doIncludAll(
     {
-      preload: ["./components/card.html", "./components/cardList.json"],
+      preload: ["https://aclive.ru/Methed-lib/template-list/card.html", jsonUrl],
       replace: [ { from: '../img/', to: './img/' }, ],
     },
     (defProps) => { // вызывается когда IncludHtml.doIncludAll всё сделал 
