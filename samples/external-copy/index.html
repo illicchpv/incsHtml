@@ -22,24 +22,16 @@
     <div class="variants">
       <div class="variant">
         <div class="variant__descr">
-          исходный button который используется как заготовка
-        </div>
-        <div class="variant__sample">
-          <button class="button-test" id="button1" type="button" onclick="alert('у этой кнопки id: [' + this.id + ']')">button1 text</button>
-        </div>
-      </div>
-
-      <div class="variant">
-        <div class="variant__descr">
-          копия button1 c измененным текстом, Id и добавлен класс:
+          кнопка из components/button-test.html#extId <br>c измененным текстом, Id и добавлен класс:button-test_new-class1
         </div>
         <div class="variant__sample">
           <div class="incs" data-incs='{
-              insertType: "replace", incInner: false, "incFromId": "button1", // элемент будет заменён найденным по id 
+              insertType: "replace", incInner: false, 
+              incFile: "./components/button-test.html",
               onLoadCallback(params){
                 params.extEl.innerHTML = "new text1"
-                params.extEl.className += " button-test_new-class1"
                 params.extEl.id = "newId1"
+                params.extEl.className += " button-test_new-class1"
               },
             }'></div>
         </div>
@@ -47,15 +39,16 @@
 
       <div class="variant">
         <div class="variant__descr">
-          копия button1 c измененным текстом, Id и добавлен класс:
+          кнопка из components/button-test.html#extId <br>c измененным текстом, Id и добавлен класс:button-test_new-class2
         </div>
         <div class="variant__sample">
           <div class="incs" data-incs='{
-              insertType: "replace", incInner: false, "incFromId": "button1", // элемент будет заменён найденным по id 
+              insertType: "replace", incInner: false, 
+              incFile: "./components/button-test.html",
               onLoadCallback(params){
                 params.extEl.innerHTML = "new text2"
-                params.extEl.className += " button-test_new-class2"
                 params.extEl.id = "newId2"
+                params.extEl.className += " button-test_new-class2"
               },
             }'></div>
         </div>

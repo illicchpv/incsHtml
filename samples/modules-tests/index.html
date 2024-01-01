@@ -48,7 +48,16 @@
         },
     }'>этот элемент будет заменён из mminimal.html</div>
 
-  
+    <div class="incs" data-incs='{ 
+        insertType: "replace", 
+        incFile: "./modules/info.html",
+        onLoadCallback(params){
+          //params.extEl.innerHTML = "new text1"
+          //params.extEl.id = "newId1"
+          params.extEl.className += " about-sample_right"
+        },
+      }'>тут будет заменено из modules/info.html</div>
+    
   <div class="container legend" style="display: -none;">
     <h1>легенда</h1>
     <ul class="legend__list">
