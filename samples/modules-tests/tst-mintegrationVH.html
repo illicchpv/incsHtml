@@ -3,6 +3,11 @@
 
 <head>
 
+  <!-- 
+
+http://aclive.ru/modules-tests/tst-mintegrationVH.html
+    
+   -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="./favicon.ico">
@@ -34,72 +39,192 @@
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: lightblue;
     }
 
     h1 {
       text-align: center;
+      padding: 0;
+      margin: 0;
     }
 
     .container {
       max-width: 1200px;
-      background-color: lightcyan;
       margin: 0 auto;
-      padding: 20px 10px;
+      padding: 0px 10px 10px;
+    }
+    .bodyContent__inner{
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>test mintegrationVH</h1>
+  <div class="mpreloader_screen">
+    <style>
+      .mpreloader_screen {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+        display: flex;
+        width: 100vw;
+        height: 100dvh;
+        background-color: lightblue;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+      }
+    
+      .loader-104 {
+        width: 175px;
+        height: 80px;
+        background-image: radial-gradient(circle 25px at 25px 25px, #FFF 100%, transparent 0), radial-gradient(circle 50px at 50px 50px, #FFF 100%, transparent 0), radial-gradient(circle 25px at 25px 25px, #FFF 100%, transparent 0), linear-gradient(#FFF 50px, transparent 0);
+        background-size: 50px 50px, 100px 76px, 50px 50px, 120px 40px;
+        background-position: 0px 30px, 37px 0px, 122px 30px, 25px 40px;
+        background-repeat: no-repeat;
+        position: relative;
+      }
+    
+      .loader-104::before {
+        content: "";
+        left: 60px;
+        bottom: 18px;
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #FF3D00;
+        background-image: radial-gradient(circle 8px at 18px 18px, #FFF 100%, transparent 0), radial-gradient(circle 4px at 18px 0px, #FFF 100%, transparent 0), radial-gradient(circle 4px at 0px 18px, #FFF 100%, transparent 0), radial-gradient(circle 4px at 36px 18px, #FFF 100%, transparent 0), radial-gradient(circle 4px at 18px 36px, #FFF 100%, transparent 0), radial-gradient(circle 4px at 30px 5px, #FFF 100%, transparent 0), radial-gradient(circle 4px at 30px 5px, #FFF 100%, transparent 0), radial-gradient(circle 4px at 30px 30px, #FFF 100%, transparent 0), radial-gradient(circle 4px at 5px 30px, #FFF 100%, transparent 0), radial-gradient(circle 4px at 5px 5px, #FFF 100%, transparent 0);
+        background-repeat: no-repeat;
+        -webkit-animation: rotationBack 3s linear infinite;
+        animation: rotationBack 3s linear infinite;
+      }
+    
+      .loader-104::after {
+        content: "";
+        left: 94px;
+        bottom: 15px;
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: #FF3D00;
+        background-image: radial-gradient(circle 5px at 12px 12px, #FFF 100%, transparent 0), radial-gradient(circle 2.5px at 12px 0px, #FFF 100%, transparent 0), radial-gradient(circle 2.5px at 0px 12px, #FFF 100%, transparent 0), radial-gradient(circle 2.5px at 24px 12px, #FFF 100%, transparent 0), radial-gradient(circle 2.5px at 12px 24px, #FFF 100%, transparent 0), radial-gradient(circle 2.5px at 20px 3px, #FFF 100%, transparent 0), radial-gradient(circle 2.5px at 20px 3px, #FFF 100%, transparent 0), radial-gradient(circle 2.5px at 20px 20px, #FFF 100%, transparent 0), radial-gradient(circle 2.5px at 3px 20px, #FFF 100%, transparent 0), radial-gradient(circle 2.5px at 3px 3px, #FFF 100%, transparent 0);
+        background-repeat: no-repeat;
+        animation: rotationBack 4s linear infinite reverse;
+      }
+    
+      @-webkit-keyframes rotationBack {
+        0% {
+          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+        }
+    
+        100% {
+          -webkit-transform: rotate(-360deg);
+          transform: rotate(-360deg);
+        }
+      }
+    
+      @keyframes rotationBack {
+        0% {
+          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+        }
+    
+        100% {
+          -webkit-transform: rotate(-360deg);
+          transform: rotate(-360deg);
+        }
+      }
+    </style>
+    <div class="loader-104"></div>
+    <div> build: <span class="buildData"> 2024-01-03 11:18 </span>  </div>
+
+    <div class="incs" data-incs='{ 
+      incFile: modulesUrl + "mpreloader/mpreloader.html",
+      onLoadCallback(el){
+        try{
+          const iname = "instance1";
+          const inst = mpreloader.createInstance(iname);
+          el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+          inst.showSelectorOnRender = ".container;.bodyContent"
+          inst.hideSelectorOnRender = ".mpreloader_screen"
+        }catch(e){}
+      },
+    }'><i style="display: none;">этот элемент будет заменён из mpreloader.html</i></div>
+    <style>
+      .bodyContent{
+        opacity: 0;
+        transition: opacity 1s ease;
+        .container{
+          display: none;
+        }
+      }
+    </style>
   </div>
-  <div class="container">
 
-    <div class="incs" data-incs='{ 
-      incFile: modulesUrl + "mintegrationVH/mintegrationVH.html",
-      onLoadCallback(el){
-        try{
-          const iname = "instance1";
-          const inst = mintegrationVH.createInstance(iname);
-          el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
-          inst.moduleInstancesList = [{m:mhorizontal, i:"instance1"}, {m:mvertical, i:"instance1"},];
-          inst.switchPosition = 1;
-        }catch(e){}
-      },
-    }'>этот элемент будет заменён из mintegrationVH.html</div>
+  <div class="bodyContent">
+    <div class="container">
+      <h1>test mintegrationVH</h1>
+    </div>
 
-  </div>
+    <div class="bodyContent__inner">
+      <div class="container">
 
-  <div class="container">
+        <div class="incs" data-incs='{ 
+          incFile: modulesUrl + "mintegrationVH/mintegrationVH.html",
+          onLoadCallback(el){
+            try{
+              const iname = "instance1";
+              const inst = mintegrationVH.createInstance(iname);
+              el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+              inst.moduleInstancesList = [{m:mhorizontal, i:"instance1"}, {m:mvertical, i:"instance1"},];
+              inst.switchPosition = 1;
+            }catch(e){}
+          },
+        }'>этот элемент будет заменён из mintegrationVH.html</div>
 
-    <div class="incs" data-incs='{ 
-      incFile: modulesUrl1 + "mhorizontal/mhorizontal.html",
-      onLoadCallback(el){
-        try{
-          const iname = "instance1";
-          const inst = mhorizontal.createInstance(iname);
-          el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
-          inst.jsonUrl = modulesUrl1 + "mhorizontal/test.json";
-        }catch(e){}
-      },
-    }'>этот элемент будет заменён из mhorizontal.html</div>
-  
-    <div class="incs" data-incs='{ 
-      incFile: modulesUrl2 + "mvertical/mvertical.html",
-      onLoadCallback(el){
-        try{
-          const iname = "instance1";
-          const inst = mvertical.createInstance(iname);
-          el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
-          inst.jsonUrl = modulesUrl2 + "mvertical/test.json";
-        }catch(e){}
-      },
-    }'>этот элемент будет заменён из mvertical.html</div>
+      </div>
 
+      <div class="container">
+
+        <div class="incs" data-incs='{ 
+          incFile: modulesUrl1 + "mhorizontal/mhorizontal.html",
+          onLoadCallback(el){
+            try{
+              const iname = "instance1";
+              const inst = mhorizontal.createInstance(iname);
+              el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+              inst.jsonUrl = modulesUrl1 + "mhorizontal/test.json";
+            }catch(e){}
+          },
+        }'>этот элемент будет заменён из mhorizontal.html</div>
+
+        <div class="incs" data-incs='{ 
+          incFile: modulesUrl2 + "mvertical/mvertical.html",
+          onLoadCallback(el){
+            try{
+              const iname = "instance1";
+              const inst = mvertical.createInstance(iname);
+              el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+              inst.jsonUrl = modulesUrl2 + "mvertical/test.json";
+            }catch(e){}
+          },
+        }'>этот элемент будет заменён из mvertical.html</div>
+
+      </div>
+    </div>
   </div>
 
   <script>
     var __modulesList = [
+      { name: 'mpreloader', js: modulesUrl + 'mpreloader/mpreloader.js', css: modulesUrl + 'mpreloader/mpreloader.css', },
       { name: 'mhorizontal', js: modulesUrl1 + 'mhorizontal/mhorizontal.js', css: modulesUrl1 + 'mhorizontal/mhorizontal.css', },
       { name: 'mvertical', js: modulesUrl2 + 'mvertical/mvertical.js', css: modulesUrl2 + 'mvertical/mvertical.css', },
       { name: 'mintegrationVH', js: modulesUrl + 'mintegrationVH/mintegrationVH.js', css: modulesUrl + 'mintegrationVH/mintegrationVH.css', },

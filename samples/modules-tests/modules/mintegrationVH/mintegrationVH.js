@@ -66,13 +66,14 @@ var mintegrationVH = (() => {
         this.iEl.querySelector('.instance').innerHTML = this.iname
 
         if(!this.switchPosition){
-          this.iEl.querySelector('.switch-input').removeAttribute('checked') 
-          this.iEl.querySelector('.toggleBlock__text').innerHTML = 'получить четные значения'       
+          this.iEl.querySelector('.odd0 .switch-input').removeAttribute('checked') 
+          this.iEl.querySelector('.odd1 .switch-input').setAttribute('checked', '')        
+          // this.iEl.querySelector('.toggleBlock__text').innerHTML = 'получить четные значения'       
         }else{
-          this.iEl.querySelector('.switch-input').setAttribute('checked', '')        
-          this.iEl.querySelector('.toggleBlock__text').innerHTML = 'получить нечетные значения'       
+          this.iEl.querySelector('.odd1 .switch-input').removeAttribute('checked')        
+          this.iEl.querySelector('.odd0 .switch-input').setAttribute('checked', '')        
+          // this.iEl.querySelector('.toggleBlock__text').innerHTML = 'получить нечетные значения'       
         }
-        // return
         const templ1 = `
         <div class="rez__line">
           <i>(module1.inst1)</i>

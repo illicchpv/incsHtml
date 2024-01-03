@@ -15,15 +15,28 @@
   <h2>mintegrationVH.<span class="instance">instance</span></h2>
 
   <div class="toggleBlock">
-    <div class="mtoggle">
-      <label class="switch switch-green" onclick="event.preventDefault(); mintegrationVH.getModuleInstance(this).toggleSwitch();">
-        <input class="switch-input" type="checkbox" checked>
-        <span class="switch-label" data-on="On" data-off="Off"></span>
-        <span class="switch-handle"></span>
-      </label>
-    </div>  
 
-    <span class="toggleBlock__text">получить четные значения</span>
+    <span class="odd0">
+      <div class="mtoggle">
+        <label class="switch switch-green" onclick="event.preventDefault(); mintegrationVH.getModuleInstance(this).toggleSwitch();">
+          <input class="switch-input" type="checkbox" checked>
+          <span class="switch-label" data-on="On" data-off="Off"></span>
+          <span class="switch-handle"></span>
+        </label>
+      </div>  
+      <span class="toggleBlock__text"> четные значения</span>
+    </span>
+    
+    <span class="odd1">
+      <div class="mtoggle">
+        <label class="switch switch-green" onclick="event.preventDefault(); mintegrationVH.getModuleInstance(this).toggleSwitch();">
+          <input class="switch-input" type="checkbox">
+          <span class="switch-label" data-on="On" data-off="Off"></span>
+          <span class="switch-handle"></span>
+        </label>
+      </div>  
+      <span class="toggleBlock__text"> НЕчетные</span>
+    </span>
   </div>
 
   <div class="rez">

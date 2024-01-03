@@ -6,12 +6,19 @@
   border: 1px solid lightslategray;
   background-color: white;
   color: black;
-  max-width: 550px;
+  max-width: 470px;
+  border-radius: 10px;
 
   .instance {
     color: blue;
   }
   .toggleBlock{
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .odd0, .odd1{
     display: flex;
     gap: 10px;
     align-items: center;

@@ -6,11 +6,17 @@
   border: 1px solid lightslategray;
   background-color: white;
   color: black;
-  max-width: 550px;
-  min-height: 15em;  
+  max-width: 470px;
+  min-height: 12em;  
+  border-radius: 10px;
 
   .instance {
     color: blue;
+  }
+  .jsonUrl{
+    font-size: 12px;
+    font-weight: 400;
+    /* font-style: italic; */
   }
   .rez{
     display: flex;
