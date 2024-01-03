@@ -1,0 +1,41 @@
+/* mvertical.css */
+.mvertical {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 24;
+  padding: 10px;
+  border: 1px solid lightslategray;
+  background-color: white;
+  color: black;
+  max-width: 550px;
+  min-height: 15em;
+
+  .content{
+    display: flex;
+    gap: 20px;
+  }
+  .instance {
+    color: blue;
+  }
+  .rez{
+    display: flex;
+    align-items: center;
+  }
+  .box {
+    background-color: antiquewhite;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: end;
+    gap: 10px;
+    /* padding-top: 10px; */
+    margin-left: 10px;
+  }
+  .box i{
+    /* display: none; */
+    font-style: normal;
+  }
+  .box i:not(:last-child)::after{
+    content: ',';
+  }
+}

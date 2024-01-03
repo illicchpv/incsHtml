@@ -1,0 +1,24 @@
+<!-- 
+  <div class="incs" data-incs='{ 
+    incFile: modulesUrl + "mhorizontal/mhorizontal.html",
+    onLoadCallback(el){
+      try{
+        const iname = "instance1";
+        const inst = mhorizontal.createInstance(iname);
+        inst.counter = 30;
+        el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+      }catch(e){}
+    },
+  }'>этот элемент будет заменён из mhorizontal.html</div>
+-->
+<div id="extId" class="mhorizontal">
+  <h2>mhorizontal.<span class="instance">instance</span></h2>
+  <h4>json URL: <span class="jsonUrl">jsonFile.json</span></h4>
+  <p>loadingStatus: <span class="loadingStatus"></span></p>
+  <div class="rez">
+    <span>результаты: </span> 
+    <span class="box">
+      <i>x11</i><i>x13</i><i>x17</i><i>x21</i><i>x71</i>
+    </span>
+  </div>
+</div>

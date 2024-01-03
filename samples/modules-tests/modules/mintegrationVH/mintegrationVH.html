@@ -1,0 +1,41 @@
+<!-- 
+  <div class="incs" data-incs='{ 
+    incFile: modulesUrl + "mintegrationVH/mintegrationVH.html",
+    onLoadCallback(el){
+      try{
+        const iname = "instance1";
+        const inst = mintegrationVH.createInstance(iname);
+        inst.counter = 30;
+        el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+      }catch(e){}
+    },
+  }'>этот элемент будет заменён из mintegrationVH.html</div>
+-->
+<div id="extId" class="mintegrationVH">
+  <h2>mintegrationVH.<span class="instance">instance</span></h2>
+
+  <div class="toggleBlock">
+    <div class="mtoggle">
+      <label class="switch switch-green" onclick="event.preventDefault(); mintegrationVH.getModuleInstance(this).toggleSwitch();">
+        <input class="switch-input" type="checkbox" checked>
+        <span class="switch-label" data-on="On" data-off="Off"></span>
+        <span class="switch-handle"></span>
+      </label>
+    </div>  
+
+    <span class="toggleBlock__text">получить четные значения</span>
+  </div>
+
+  <div class="rez">
+    <!-- <span>нечетные результаты: </span> 
+    <div class="rez__line">
+      <i>module1.inst1</i>
+      <i class="rez__lineValues"><b>111</b><b>111</b><b>111</b><b>111</b></i>
+    </div>
+    <div class="rez__line">
+      <i>module1.inst1</i>
+      <i class="rez__lineValues"><b>222</b><b>222</b><b>333</b><b>444</b></i>
+    </div> -->
+  </div>
+
+</div>

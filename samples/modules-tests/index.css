@@ -9,7 +9,7 @@ body{
 
 .container {
   width: 100%;
-  max-width: 1024;
+  max-width: 1200px;
   margin: 0 auto;
   /* background-color: red; */
 }
@@ -28,12 +28,30 @@ body{
   gap: 20px;
 }
 
+.legend{
+  margin-bottom: 20px;
+}
 .legend__list{
   padding-left: 50px;
 }
 .legend__li::marker{
   content: '🔥---- ';
   display: block;
+}
+.legend__br{
+  margin-left: -50px;
+  display: flex;
+  width: 100%;
+}
+.legend__br::marker{
+  content: '';
+}
+.legend__br hr{
+  width: 100%;
+}
+.legend__br span{
+  flex-shrink: 0;
+  font-weight: 700;
 }
 
 .timer{
