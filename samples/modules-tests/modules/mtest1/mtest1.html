@@ -1,0 +1,22 @@
+<!-- 
+  <div class="incs" data-incs='{ 
+    incFile: modulesUrl + "mtest1/mtest1.html",
+    onLoadCallback(el){
+      try{
+        const iname = "instance1";
+        const inst = mtest1.createInstance(iname);
+        inst.counter = 30;
+        el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+      }catch(e){}
+    },
+  }'>этот элемент будет заменён из mtest1.html</div>
+-->
+<div id="extId" class="mtest1">
+  <h2>mtest1.<span class="instance">instance</span></h2>
+  <div class="box">
+    <div class="box__row">
+      counter: <span class="counter">0000</span>
+    </div>
+    <button onclick="mtest1.getModuleInstance(this).incCouunter()">press for counter++</button>
+  </div>
+</div>

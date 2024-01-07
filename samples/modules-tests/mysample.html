@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+  <!-- пример создания страницы из 2х модулей -->
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <title>mysample</title>
+
+  <script>var isLocal = false; var isMainLocal = true;</script>
+  <script src="./isLocal.js"></script>
+  <script>
+    var modulesUrl = isLocal ? './modules/' : '//aclive.ru/modules-tests/modules/'
+  </script>
+
+  <!-- local основные скрипты
+-->
+  <script>isMainLocal = true;</script>
+  <script src="./modules/utils.js" defer></script>
+  <script src="./modules/IncludHtml.js" defer></script>
+  <script src="./modules/modulesLoader.js" defer></script>
+  <!-- host основные скрипты
+<script>isMainLocal = false;</script>
+<script src="//aclive.ru/modules-tests/modules/utils.js" defer></script>
+<script src="//aclive.ru/modules-tests/modules/IncludHtml.js" defer></script>
+<script src="//aclive.ru/modules-tests/modules/modulesLoader.js" defer></script>
+-->
+  <!-- -->
+  <script>console.log('isLocal: ', isLocal, 'isMainLocal:', isMainLocal) </script>
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    h1 {
+      text-align: center;
+    }
+    .container {
+      max-width: 1200px;
+      background-color: lightcyan;
+      margin: 0 auto;
+      padding: 20px 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>mysample используется модуль: mtest1</h1>
+  </div>
+
+  <div class="container">
+    <div class="incs" data-incs='{ 
+      incFile: modulesUrl + "mtimer/mtimer.html",
+      onLoadCallback(el){
+        try{
+          const iname = "instance1";
+          const inst = mtimer.createInstance(iname, 
+            (mtimerInst) => {
+              console.log("timer", mtimerInst)
+              const inst = mtest1.getInstance("instance_1");
+              if(!inst){
+                console.log("не нашел")
+                return
+              }
+              const v = inst.counter + 100
+              inst.setCouunter(v)
+            }
+          );
+          inst.counter = 0;
+          inst.frequency = 1;
+          inst.pause = 0;
+          el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+        }catch(e){}
+      },
+    }'>этот элемент будет заменён из mtimer.html</div>    
+  </div>
+
+
+  <div class="container">
+
+    <div class="incs" data-incs='{ 
+      incFile: modulesUrl + "mtest1/mtest1.html",
+      onLoadCallback(el){
+        try{
+          const iname = "instance_1";
+          const inst = mtest1.createInstance(iname);
+          inst.counter = 30;
+          inst.timerInst = "instance1";
+          el.extEl.dataset.instance = iname; el.extEl.classList.add(iname);
+        }catch(e){}
+      },
+    }'>этот элемент будет заменён из mtest1.html</div>
+  
+  </div>
+
+
+  <script>
+    var __modulesList = [
+      { name: 'mtest1', js: modulesUrl + 'mtest1/mtest1.js', css: modulesUrl + 'mtest1/mtest1.css', },
+      { name: 'mtimer', js: modulesUrl + 'mtimer/mtimer.js', css: modulesUrl + 'mtimer/mtimer.css', },
+    ]
+
+    document.addEventListener("DOMContentLoaded", async function () {
+      __modulesLoader.doload(__modulesList, __modulesReady)
+    });
+
+    function __modulesReady() {
+      console.log('!!! __modulesReady !!!');
+
+      IncludHtml.doIncludAll(
+        {
+          insertType: "replace", incInner: false,
+          replace: [
+            { from: '../img/', to: './img/' },
+          ],
+          incFromId: "extId",
+        },
+        (defProps) => { // вызывается когда IncludHtml.doIncludAll всё сделал 
+          setTimeout(function () {
+            __modulesList.forEach(el => { el.module.renderAllInstance() })
+          }, 1)
+        }
+      );
+    }
+
+  </script>
+</body>
+
+</html>
